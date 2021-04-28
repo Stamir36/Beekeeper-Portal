@@ -1,0 +1,10 @@
+# Unesell Studio файл обработчик перенаправлений.
+
+# редирект
+# Redirect / /
+
+# обработка ошибок:
+ErrorDocument 403 /service/error/403/
+ErrorDocument 404 /service/error/404/
+ErrorDocument 500 /service/error/500/
+ErrorDocument 502 /service/error/502/
