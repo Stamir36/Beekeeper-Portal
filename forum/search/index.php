@@ -4,6 +4,7 @@
     setcookie('site_page', 'forum', time() + 3600 * 24, "/");
 
     include "../../service/config.php";
+    include '../../service/contextmenu.php';
 
     $mysql = new mysqli($Host, $User, $Password, $Database);
 
@@ -120,30 +121,30 @@
 
                                 
                                 if(count($mess) == count($href) && count($mess) != 0 && count($href) != 0 ){
-                                    echo("<a style='color: #2E90FF; font-size: 14px;' id='text_notifi'>Уведомления:</a>");
-                                    echo("<div style='overflow: auto; max-height: 300px; padding-top: 5px;' id='notifi_clear'>");
-                                    while($num_notifi <= (count($mess) - 1)){
-                                        echo("
-                                        <hr />
-                                        <div>
-                                            <a href='".$href[$num_notifi]."'>
-                                                <div class='media'>
-                                                <img src='https://img.icons8.com/fluent/48/000000/filled-chat.png'  width='30' height='25' style='padding-right: 5px;'/>
-                                                    <div class='media-body'>
-                                                        <div class='notification-para'>".$mess[$num_notifi]."</div>
-                                                        <div class='notification-meta-time'>".date("d.m.Y", strtotime($data[$num_notifi]))."</div>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                        </div>
-                                        <hr />
+                                  echo("<a style='color: #2E90FF; font-size: 14px;' id='text_notifi'>Повідомлення:</a>");
+                                  echo("<div style='overflow: auto; max-height: 300px; padding-top: 5px;' id='notifi_clear'>");
+                                  while($num_notifi <= (count($mess) - 1)){
+                                      echo("
+                                      <hr />
+                                      <div>
+                                          <a href='".$href[$num_notifi]."'>
+                                              <div class='media'>
+                                              <img src='https://img.icons8.com/fluent/48/000000/filled-chat.png'  width='30' height='25' style='padding-right: 5px;'/>
+                                                  <div class='media-body'>
+                                                      <div class='notification-para'>".$mess[$num_notifi]."</div>
+                                                      <div class='notification-meta-time'>".date("d.m.Y", strtotime($data[$num_notifi]))."</div>
+                                                  </div>
+                                              </div>
+                                          </a>
+                                      </div>
+                                      <hr />
 
-                                        ");
-                                        $num_notifi = $num_notifi + 1;
-                                    }
-                                    echo("</div>");
-                                    echo("<a onclick='dell_notifi()' class='btn btn-primary btn-block mb-4 mr-2' style='position: relative; bottom: -20px;' id='notifi_clear2'>Очистить всё</a>");
-                                }else{
+                                      ");
+                                      $num_notifi = $num_notifi + 1;
+                                  }
+                                  echo("</div>");
+                                  echo("<a onclick='dell_notifi()' class='btn btn-primary btn-block mb-4 mr-2' style='position: relative; bottom: -20px;' id='notifi_clear2'>Очистити все</a>");
+                              }else{
                                     echo("<a style='color: #322EFF; text-align: center;'>Повідомлень немає</a>");
                                 }
                             ?>

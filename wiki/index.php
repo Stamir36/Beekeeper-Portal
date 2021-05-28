@@ -1,4 +1,7 @@
 <!DOCTYPE html>
+<?php
+  include '../service/contextmenu.php';
+?>
 <html lang="en">
   <head>
     <meta charset="utf-8">

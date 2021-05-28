@@ -76,6 +76,7 @@
           <nav class="navbar navbar-expand-lg navbar-light px-sm-0">
             <a class="navbar-brand" href="/" style="width: 40px; height: 40px;">
               <img class="" src="assets/img/logo.svg" alt="logo" width="40px" height="40px"/>
+              
             </a>
 
             <button class="navbar-toggler menu ripplemenu" type="button" data-toggle="collapse"
@@ -119,11 +120,9 @@
                       <div class="sub-menu">
                           <div class="icon-box">
                               <div class="icon"><img src="https://img.icons8.com/fluent/48/000000/plus-math.png" style="width: 30px; height: 30px;"/></div>
-                              <div class="text_menu">
-                                <a href="forum/new/">
+                              <div class="text_menu" style="cursor: pointer;" onclick="document.location.href = '/forum/new/';">
                                   <div class="title">Створити нову тему <i class="far fa-arrow-right"></i></div>
                                   <div class="sub-text">Задати питання на форумі.</div>
-                                </a>
                               </div>
                           </div>
                           <div class="icon-box">
@@ -254,7 +253,7 @@
                       <div class="sub-menu">
                           <div class="icon-box">
                               <div class="icon"><img src="https://img.icons8.com/fluent/48/000000/chat.png" style="width: 30px; height: 30px;"/></div>
-                              <div class="text_menu">
+                              <div class="text_menu" style="cursor: pointer;" onclick="document.location.href = '/service/support/';">
                                   <div class="title">Підтримка користувачів <i class="far fa-arrow-right"></i></div>
                                   <div class="sub-text">Написати розробникам проекту</div>
                               </div>
@@ -1118,7 +1117,6 @@
   <script src="assets/js/pages/agency.js" type="text/javascript"></script>
   <!-- new -->
   <script src="assets/js/card.js" type="module"></script>
-
 </body>
 
 </html>

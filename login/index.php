@@ -26,6 +26,10 @@
         header('Location: /login/');
       }else{
         setcookie('error', 1, time() - 10, "/");
+        if($user['name'] == "User"){
+          setcookie('id', $user['id'], time() + 3600 * 24, "/");
+          header('Location: /registration/user/');
+        }else{
         setcookie('mail', $user['email'], time() + 3600 * 24, "/");
         setcookie('name', $user['name'], time() + 3600 * 24, "/");
         setcookie('id', $user['id'], time() + 3600 * 24, "/");
@@ -46,6 +50,7 @@
         }else{
           header('Location: /');
         }
+      }
       }
     }
 ?>
@@ -147,7 +152,7 @@
         </div>
         <div class="col-md-7 col-lg-5 ml-lg-auto">
           <div class="item_group">
-            <a style="font-size: 18px; margin-bottom: 20px; color: orange;">Добро пожаловатть!</a>
+            <a style="font-size: 18px; margin-bottom: 20px; color: orange;">Ласкаво просимо!</a>
             <form method="POST" class="row">
 
               <div class="col-12">

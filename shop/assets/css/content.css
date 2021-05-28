@@ -44,6 +44,9 @@
     .is-vcentered{
         padding-left: 15px;
     }
+    .t_mobile{
+        width: 90%;
+    }
 }
 @media (min-width: 991px){
     #text1, #text2 {
@@ -67,6 +70,9 @@
     .footer{
         padding-left: 80px;
         padding-right: 80px;
+    }
+    .t_mobile{
+        width: 100%;
     }
 }
 .hero .row{

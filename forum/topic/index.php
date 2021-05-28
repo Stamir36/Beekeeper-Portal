@@ -4,6 +4,7 @@
     setcookie('site_page', 'forum', time() + 3600 * 24, "/");
 
     include "../../service/config.php";
+    include '../../service/contextmenu.php';
 
     if(strlen(htmlspecialchars($_COOKIE["id"])) <= 0){
       $cook_id = "";
@@ -71,6 +72,7 @@
         <!-- Required meta tags -->
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="shortcut icon" href="https://img.icons8.com/fluent/48/000000/comment-discussion.png" type="image/png">
     
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
@@ -79,7 +81,6 @@
         <link rel="stylesheet" href="../assets/css/style.css">
         <link rel="stylesheet" href="style.css">
         <title><?php echo($main_mess['header']);?> - Форум. Обговорення теми.</title>
-        <link rel="shortcut icon" href="https://img.icons8.com/fluent/48/000000/comment-discussion.png" type="image/png">
       </head>
   <body>
   <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light">
@@ -121,7 +122,7 @@
 
                                 
                                 if(count($mess) == count($href) && count($mess) != 0 && count($href) != 0 ){
-                                    echo("<a style='color: #2E90FF; font-size: 14px;' id='text_notifi'>Уведомления:</a>");
+                                    echo("<a style='color: #2E90FF; font-size: 14px;' id='text_notifi'>Повідомлення:</a>");
                                     echo("<div style='overflow: auto; max-height: 300px; padding-top: 5px;' id='notifi_clear'>");
                                     while($num_notifi <= (count($mess) - 1)){
                                         echo("
@@ -143,7 +144,7 @@
                                         $num_notifi = $num_notifi + 1;
                                     }
                                     echo("</div>");
-                                    echo("<a onclick='dell_notifi()' class='btn btn-primary btn-block mb-4 mr-2' style='position: relative; bottom: -20px;' id='notifi_clear2'>Очистить всё</a>");
+                                    echo("<a onclick='dell_notifi()' class='btn btn-primary btn-block mb-4 mr-2' style='position: relative; bottom: -20px;' id='notifi_clear2'>Очистити все</a>");
                                 }else{
                                     echo("<a style='color: #322EFF; text-align: center;'>Повідомлень немає</a>");
                                 }
@@ -212,32 +213,6 @@
           </div>
 
           <div class="games_card">
-
-            <!-- Modal Support -->
-            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <h4 class="modal-title" id="myModalLabel">Скарга на пост</h4>
-                  </div>
-                  <div class="modal-body">
-                    <p>Будь ласка, вкажіть причину скарги:</p>
-                    <input type="text" style="width: 100%">
-                    <br><br>
-                    <p style="color: red; font-size: 10px; width: 80%;">* Якщо від вас будуть надходити хибні скарги, ваш акаунт може бути видалений.
-                      <br>** Автор поста отримає повідомлення.</p>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Закрити</button>
-                    <button type="button" class="btn btn-warning" onclick="send_supp();">Відправити</button>
-                  </div>
-                </div>
-                <!-- /.modal-content -->
-              </div>
-              <!-- /.modal-dialog -->
-            </div>
-            <!-- /.modal -->
-
             <div style="padding-bottom: 0px;">
                 <div class='block_mess'>
                   <div class="row">
@@ -277,15 +252,76 @@
 
                             }
 
+                            echo("
+                            <a><button onclick='data_support(".$main_mess['author_id'].", `Forum.MainMess.URL:".$_SERVER['REQUEST_URI'].".MESS:".$main_mess['body']."`);' class='btn btn-primary' data-toggle='modal' data-target='#myModal'>Скарга</button></a><br>
+                            ");
                             ?>
-                            <a><button class="btn btn-primary" data-toggle="modal" data-target="#myModal">Скарга</button></a><br>
                             <?php
                               if(strlen($cook_id) > 0){
                                 echo("
-                                  <a id='like' style='margin-top: 10px' class='btn btn-danger' onclick='like();'' role='button'>♥ Слідкувати</a>
+                                  <a id='like' style='margin-top: 10px' class='btn btn-danger' onclick='like();' role='button'>♥ Слідкувати</a>
                                 ");
                               }
                             ?>
+                            <script>
+                              function like(){
+                                  $.ajax({
+                                    url: 'like.php',
+                                    type: 'POST',
+                                    data:{id: "<?php echo($id);?> ", header: "<?php echo($main_mess['header']);?>", autor: "<?php echo($cook_id);?>"},
+                                    success: function(data) {
+                                      document.getElementById("like").textContent = "Не слідкувати 💔";
+                                      document.getElementById("like").setAttribute('onclick','no_like()');
+                                      document.getElementById("like").setAttribute('class','btn btn-warning');
+                                    }
+                                  });
+                                }
+                                function no_like(){
+                                  $.ajax({
+                                    url: '../liked/no_like.php',
+                                    type: 'POST',
+                                    data:{id: "<?php echo($id);?> ", autor: "<?php echo($cook_id);?>"},
+                                    success: function(data) {
+                                      document.getElementById("like").textContent = "♥ Слідкувати";
+                                      document.getElementById("like").setAttribute('onclick','like()');
+                                      document.getElementById("like").setAttribute('class','btn btn-danger');
+                                    }
+                                  });
+                                }
+                                function plus(id, type){
+                                  var scores_new = Number(document.getElementById("rating_" + id).textContent) + 0.1;
+                                  $.ajax({
+                                    url: 'rating.php',
+                                    type: 'POST',
+                                    data:{id_mess: id, account: "<?php echo($cook_id);?>", score: 'plus', type: type, new: scores_new},
+                                    success: function(data) {
+                                      document.getElementById("rating_" + id).style = "display: inline; cursor: default; font-size: 22px; padding: 5px; margin-right: 5px; margin-top: 5px; background-color: rgba(255, 221, 70, 0.45); border-radius: 10px;";
+                                      document.getElementById("rating_" + id).textContent = scores_new;
+                                      document.getElementById("plus_" + id).style = "display: none;";
+                                      document.getElementById("minus_" + id).style = "display: none;";
+                                      $("#note_box").fadeOut(0);
+                                      throw_message("Ви проголосували позитивно.");
+                                    }
+                                  });
+                                }
+
+                                function minus(id, type){
+                                  var scores_new = Number(document.getElementById("rating_" + id).textContent) - 0.1;
+                                  $.ajax({
+                                    url: 'rating.php',
+                                    type: 'POST',
+                                    data:{id_mess: id, account: "<?php echo($cook_id);?>", score: 'minus', type: type, new: scores_new},
+                                    success: function(data) {
+                                      document.getElementById("rating_" + id).style = "display: inline; cursor: default; font-size: 22px; padding: 5px; margin-right: 5px; margin-top: 5px; background-color: rgba(255, 221, 70, 0.45); border-radius: 10px;";
+                                      document.getElementById("rating_" + id).textContent = scores_new;
+                                      document.getElementById("plus_" + id).style = "display: none;";
+                                      document.getElementById("minus_" + id).style = "display: none;";
+                                      $("#note_box").fadeOut(0);
+                                      throw_message("Ви проголосували негативно.");
+                                    }
+                                  });
+                                }
+                            </script>
                           </div>
                         <br>
                     </div>
@@ -334,8 +370,12 @@
                                 }
 
                               }
+
+                              echo("
+                                <a><button onclick='data_support(".$names_add[$num_theme].", `Forum.SUBmess.URL:".$_SERVER['REQUEST_URI'].".MESS:".$main_mess['body']."`);' class='btn btn-primary' data-toggle='modal' data-target='#myModal'>Скарга</button></a><br>
+                              ");
                                 
-                              echo("<a class='btn btn-primary' role='button'>Скарга</a>
+                              echo("
                               </div>
                             <br>
                         </div>
@@ -351,7 +391,64 @@
                 }
               }                        
             ?>
-                
+                <script>
+                  function data_support(id, type){
+                    var func = "send_support(" + id + ", `" + type + "`)";
+                    document.getElementById("sent_support").setAttribute('onclick', func); 
+                  }
+                </script>
+                <!-- Modal Support -->
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">Скарга на пост</h4>
+                  </div>
+                  <div class="modal-body">
+                    <p>Будь ласка, вкажіть причину скарги:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+                    <input id="text_support" type="text" style="width: 100%">
+                    <?php             
+                      if(strlen($cook_id) > 0){
+                        echo("
+                        <br><br>
+                        <p style='color: red; font-size: 10px; width: 80%;'>* Якщо від вас будуть надходити хибні скарги, ваш акаунт може бути видалений. Також, автор поста отримає повідомлення.</p>
+                        ");
+                      }
+                    ?>
+                  </div>
+                  <div class="modal-footer">
+                    <button id="close_support" type="button" class="btn btn-default" data-dismiss="modal">Закрити</button>
+                    <button id="sent_support" type="button" class="btn btn-warning" onclick="send_support()">Відправити</button>
+                    <script>
+                    function send_support(id, type){
+                      if(document.getElementById("text_support").value.length > 4){
+                        if(Censorship(document.getElementById("text_support").value)){
+                            $("#note_box").fadeOut(0);
+                            throw_message("Вибачте, але ваша скарга містить слова, які забороненно вживати в системі!");
+                          }else{
+                            var system_info = "Account_violator_id: " + id + " DATA: " + type;
+                            window.open("send_support.php?nofi=" + id + "&mess=" + document.getElementById("text_support").value + "&info=" + system_info + "&url=" + "<?php echo("../../../..".$_SERVER['REQUEST_URI']); ?>" ,"_blank");
+                            window.focus();
+
+                            throw_message("Скарга відправлена.");
+                            document.getElementById("close_support").click();
+                            document.getElementById("text_support").value = "";                           
+                        }
+                      }else{
+                          $("#note_box").fadeOut(0);
+                          throw_message("Вибачте, але ваша скарга дуже маленька, напишіть більше деталей.");
+                      }
+                    }
+
+                  </script>
+                  </div>
+                </div>
+                <!-- /.modal-content -->
+              </div>
+              <!-- /.modal-dialog -->
+            </div>
+            <!-- /.modal -->
+            
                 <nav style="padding-top: 15px; z-index: -10;">
                   <ul class="pagination">
                     
@@ -452,107 +549,13 @@
               ");
             }
           ?>
-            
-
-            
-          
           </div>
         </div>
     </div>
 
-    <div id='note_box' class="alert alert-danger alert-dismissible fade show" role="alert" style='display: none; position: fixed; width: 350px; min-height: 55px; right: 12px; top: 80px; text-align: left; border: 1px solid black;'>
+    <div id='note_box' class="alert alert-danger alert-dismissible fade show" role="alert" style='z-index: 100000; display: none; position: fixed; width: 350px; min-height: 55px; right: 12px; top: 80px; text-align: left; border: 1px solid black;'>
       <p id='note_message' style='color: rgb(0, 0, 0); margin: 3px; font-weight: bold;  text-shadow: 1px 1px 1px #FFFFFF; filter: dropshadow(color=#FFFFFF, offx=1, offy=1);'></p>
     </div>
-
-    <script>
-        function throw_message(str) {
-            $('#note_message').html(str);
-            $("#note_box").fadeIn(500).delay(3000).fadeOut(500);
-        }
-    </script>
-    
-    <script src="../../assets/js/censorship.js">// Проверка на цензуру</script>
-    <script>
-      function plus(id, type){
-        var scores_new = Number(document.getElementById("rating_" + id).textContent) + 0.1;
-        $.ajax({
-          url: 'rating.php',
-          type: 'POST',
-          data:{id_mess: id, account: "<?php echo($cook_id);?>", score: 'plus', type: type, new: scores_new},
-          success: function(data) {
-            document.getElementById("rating_" + id).style = "display: inline; cursor: default; font-size: 22px; padding: 5px; margin-right: 5px; margin-top: 5px; background-color: rgba(255, 221, 70, 0.45); border-radius: 10px;";
-            document.getElementById("rating_" + id).textContent = scores_new;
-            document.getElementById("plus_" + id).style = "display: none;";
-            document.getElementById("minus_" + id).style = "display: none;";
-            $("#note_box").fadeOut(0);
-            throw_message("Ви проголосували позитивно.");
-          }
-        });
-      }
-
-      function minus(id, type){
-        var scores_new = Number(document.getElementById("rating_" + id).textContent) - 0.1;
-        $.ajax({
-          url: 'rating.php',
-          type: 'POST',
-          data:{id_mess: id, account: "<?php echo($cook_id);?>", score: 'minus', type: type, new: scores_new},
-          success: function(data) {
-            document.getElementById("rating_" + id).style = "display: inline; cursor: default; font-size: 22px; padding: 5px; margin-right: 5px; margin-top: 5px; background-color: rgba(255, 221, 70, 0.45); border-radius: 10px;";
-            document.getElementById("rating_" + id).textContent = scores_new;
-            document.getElementById("plus_" + id).style = "display: none;";
-            document.getElementById("minus_" + id).style = "display: none;";
-            $("#note_box").fadeOut(0);
-            throw_message("Ви проголосували негативно.");
-          }
-        });
-      }
-
-      function send(){
-          if(document.getElementById("messag").value.length > 2){
-            if(Censorship(document.getElementById("messag").value)){
-              $("#note_box").fadeOut(0);
-              throw_message("Вибачте, але ваш тект містить слова, які забороненно вживати в системі!");
-          }else{
-            var form = document.getElementById("sends");
-            form.submit();
-          }
-        }else{
-          $("#note_box").fadeOut(0);
-          throw_message("Вибачте, але ваш текст дуже маленький, напишіть більше.");
-        }
-      }
-
-      function send_supp(){
-        throw_message("Скарга відправлена.");
-      }
-
-      function like(){
-        $.ajax({
-          url: 'like.php',
-          type: 'POST',
-          data:{id: "<?php echo($id);?> ", header: "<?php echo($main_mess['header']);?>", autor: "<?php echo($cook_id);?>"},
-          success: function(data) {
-            document.getElementById("like").textContent = "Не слідкувати 💔";
-            document.getElementById("like").setAttribute('onclick','no_like()');
-            document.getElementById("like").setAttribute('class','btn btn-warning');
-          }
-        });
-      }
-
-      function no_like(){
-        $.ajax({
-          url: '../liked/no_like.php',
-          type: 'POST',
-          data:{id: "<?php echo($id);?> ", autor: "<?php echo($cook_id);?>"},
-          success: function(data) {
-            document.getElementById("like").textContent = "♥ Слідкувати";
-            document.getElementById("like").setAttribute('onclick','like()');
-            document.getElementById("like").setAttribute('class','btn btn-danger');
-          }
-        });
-      }
-      
-    </script>
 
     <nav class="main-menu" style="padding-top: 60px;">
             <ul>
@@ -631,37 +634,9 @@
       </div>
 
       <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
-      <script>
-        function like(){
-          $.ajax({
-              url: 'like.php',
-              type: 'POST',
-              data:{id: "<?php echo($id);?> ", header: "<?php echo($main_mess['header']);?>", autor: "<?php echo($cook_id);?>"},
-              success: function(data) {
-                document.getElementById("like").textContent = "Не слідкувати 💔";
-                document.getElementById("like").setAttribute('onclick','no_like()');
-                document.getElementById("like").setAttribute('class','btn btn-warning');
-              }
-            });
-          }
-
-          function no_like(){
-            $.ajax({
-              url: '../liked/no_like.php',
-              type: 'POST',
-              data:{id: "<?php echo($id);?> ", autor: "<?php echo($cook_id);?>"},
-              success: function(data) {
-                document.getElementById("like").textContent = "♥ Слідкувати";
-                document.getElementById("like").setAttribute('onclick','like()');
-                document.getElementById("like").setAttribute('class','btn btn-danger');
-              }
-            });
-          }
-      </script>
       <script src="script.js" type="text/javascript"></script>
-
-    <!-- Конец навигатора наверх -->
-    <?php
+      <script src="../../assets/js/censorship.js">// Проверка на цензуру</script>
+      <?php
         if(strlen($likes['id']) > 0){
           echo("
           <script>
@@ -680,6 +655,7 @@
           ");
         }
     ?>
+    <!-- Конец навигатора наверх -->
  </body>
 </html>
 

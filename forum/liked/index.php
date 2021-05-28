@@ -121,8 +121,8 @@
                                 $num_notifi = 0;
 
                                 
-                                if(count($mess) == count($href) && count($mess) != 0 && count($href) != 0 ){
-                                    echo("<a style='color: #2E90FF; font-size: 14px;' id='text_notifi'>Уведомления:</a>");
+                                  if(count($mess) == count($href) && count($mess) != 0 && count($href) != 0 ){
+                                    echo("<a style='color: #2E90FF; font-size: 14px;' id='text_notifi'>Повідомлення:</a>");
                                     echo("<div style='overflow: auto; max-height: 300px; padding-top: 5px;' id='notifi_clear'>");
                                     while($num_notifi <= (count($mess) - 1)){
                                         echo("
@@ -144,7 +144,7 @@
                                         $num_notifi = $num_notifi + 1;
                                     }
                                     echo("</div>");
-                                    echo("<a onclick='dell_notifi()' class='btn btn-primary btn-block mb-4 mr-2' style='position: relative; bottom: -20px;' id='notifi_clear2'>Очистить всё</a>");
+                                    echo("<a onclick='dell_notifi()' class='btn btn-primary btn-block mb-4 mr-2' style='position: relative; bottom: -20px;' id='notifi_clear2'>Очистити все</a>");
                                 }else{
                                     echo("<a style='color: #322EFF; text-align: center;'>Повідомлень немає</a>");
                                 }
@@ -575,6 +575,9 @@
                   });
       </script>
     <!-- Конец навигатора наверх -->
+    <?php
+    include '../../service/contextmenu.php';
+    ?>
  </body>
 </html>
 

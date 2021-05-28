@@ -237,6 +237,12 @@ p.animation {
     animation: arrow-6-fixed-anim 1s cubic-bezier(0.2, 1, 0.3, 1) infinite;
 }
  
+ /*-----------------------------
+  logoName
+-----------------------------*/
+.logoName {
+  color:white;
+}
 @keyframes arrow-6-anim {
     0% {
         opacity: 1;

@@ -11,6 +11,5 @@
     $ads = false;
     $forum_rating_mess = true;
 
-
     // @2021 Unesell Studio 
 ?>

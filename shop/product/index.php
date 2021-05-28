@@ -1,7 +1,7 @@
 <?php
     //Loader data
     $cook_id = htmlspecialchars($_COOKIE["id"]);
-    setcookie('site_page', 'forum', time() + 3600 * 24, "/");
+    setcookie('site_page', 'shop', time() + 3600 * 24, "/");
 
     include "../../service/config.php";
 
@@ -14,17 +14,57 @@
     $name = $user['name'];
     $avatar = $user['avatar'];
     $premium = $user['premium'];
-    
+
+    if(isset($_GET["id"])){
+        $id = $_GET["id"];
+    }else{
+        header("Location: /shop/");
+    }
+    $query_p = $mysql->query("SELECT * FROM `shop_product` WHERE `id` = '$id'");
+    $product = $query_p->fetch_assoc();
+
+    $new_look = (int)$product['look'] + 1;
+    if((int)htmlspecialchars($_COOKIE["last_view"]) != (int)$id){
+        $mysql->query("UPDATE `shop_product` SET `look` = '$new_look' WHERE `shop_product`.`id` = $id");
+        setcookie('last_view', $id, time() + 3600 * 24, "/");
+    }
+
+    if(strlen(htmlspecialchars($_COOKIE["curs_rub"])) > 0 && strlen(htmlspecialchars($_COOKIE["curs_usd"])) > 0){
+        $curs_rub = htmlspecialchars($_COOKIE["curs_rub"]);
+        $curs_usd = htmlspecialchars($_COOKIE["curs_usd"]);
+    }else{
+        $ch = curl_init();  
+        curl_setopt($ch, CURLOPT_URL, "http://www.cbr.ru/scripts/XML_daily.asp?date_req=".date("d/m/Y"));
+        curl_setopt($ch, CURLOPT_HEADER, 0); 
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);    
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
+        
+        $result = curl_exec($ch);
+        
+        $xml = $result;
+        $xml_obj = new SimpleXMLElement($xml);
+        
+        $xml = $xml_obj->xpath("//Valute[@ID='R01720']"); 
+        $curs_rub = strval($xml[0]->Value) / strval($xml[0]->Nominal);  // получим курс руб
+        $xml2 = $xml_obj->xpath("//Valute[@ID='R01235']"); 
+        $curs_usd_rub = strval($xml2[0]->Value); // получим курс доллара
+        $curs_usd = $curs_rub / $curs_usd_rub;
+        setcookie('curs_rub', $curs_rub, time() + 3600 * 24, "/");
+        setcookie('curs_usd', $curs_usd, time() + 3600 * 24, "/");
+    }
+    if($premium == "yes" && $product['category'] == "Онлайн метаріали"){
+        $product['price'] = $product['price'] - ($product['price'] * 0.4);
+    }
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ua">
     <head>
         <!-- Required meta tags always come first -->
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-        <title> Продукт - портал пасічників</title>
+        <title> Продукт: <? echo($product['name']); ?> - портал пасічників</title>
         <link rel="icon" type="image/png" href="../assets/images/logo/nephos.png" />
 
         <!--Core CSS -->
@@ -55,286 +95,98 @@
             }
         </style>
     </head>
-    <body>
+    <body onload="var input = document.getElementById('search'); input.addEventListener('keyup', function(event) {if (event.keyCode === 13) {event.preventDefault();document.getElementById('go_search').click();}});">
         
-        <!-- Pageloader -->
-        <div class="pageloader"></div>
-        <div class="infraloader is-active"></div>
-        <nav class="navbar mobile-navbar is-hidden-desktop is-hidden-tablet" aria-label="main navigation">
-            <!-- Brand -->
-            <div class="navbar-brand">
-                <a class="navbar-item" href="?">
-                    <img src="https://img.icons8.com/fluent/48/000000/shopping-bag.png" alt="">
-                </a>
-        
-                <!-- Sidebar mode toggler icon -->
-                <a id="sidebar-mode" class="navbar-item is-icon is-sidebar-toggler" href="javascript:void(0);">
-                    <i data-feather="sidebar"></i>
-                </a>
-        
-                <!-- Mobile menu toggler icon -->
-                <div class="navbar-burger">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            </div>
-            <!-- Navbar mobile menu -->
-            <div class="navbar-menu">
-                <!-- Account -->
-                <div class="navbar-item has-dropdown">
-                    <a class="navbar-link">
-                        <?php
-                            if(strlen($cook_id) > 0){ // ПОИСК АВТОРИЗАЦИИ
-                                echo("
-                                    <img id='user_avatar' src='../../data/users/avatar/".$avatar."' class='round' width='40px' height='40px'>
-                                    <span class='is-heading'>".$name."</span>
-                                ");
-                            }else{
-                                echo("
-                                    <img id='user_avatar' src='../../data/users/avatar/default.png' class='round' width='40px' height='40px'>
-                                    <span class='is-heading'>Вход не выполнен</span>
-                                ");
-                            }
-                        ?>                         
-                    </a>
-        
-                    <!-- Mobile Dropdown -->
-                    <div class="navbar-dropdown">
-                        <a href="../" class="navbar-item">Головна сторінка</a>
-                        <a href="../new/" class="navbar-item">Нове оголошення</a>
-                        <a href="#" class="navbar-item">Мої оголошення</a>
-                        <a href="#" class="navbar-item">Обрані оголошення</a>
-                    </div>
-                </div>
-        
-                <!-- More -->
-                <div class="navbar-item has-dropdown">
-                    <a class="navbar-link">
-                        <i data-feather="grid"></i>
-                        <span class="is-heading">Категорії</span>
-                    </a>
-        
-                    <!-- Mobile Dropdown -->
-                    <div class="navbar-dropdown">
-                        <a href="#" class="navbar-item">Для дому</a>
-                        <a href="#" class="navbar-item">Для пасіки</a>
-                        <a href="#" class="navbar-item">Онлайн матеріали</a>
-                        <a href="#" class="navbar-item">Робота</a>
-                    </div>
-                </div>
-            </div>
-        </nav>
-        <!-- Main Sidebar-->
-        <div class="main-sidebar">
-            <div class="sidebar-brand">
-                <a href="../"><img src="../assets/images/logo/nephos.png" alt=""></a>
-            </div>
-            <div class="sidebar-inner">
-                <ul class="icon-menu">
-                    <!-- Shop sidebar trigger -->
-                    <li>
-                        <a href="javascript:void(0);" id="open-shop"><i data-feather="home"></i></a>
-                    </li>            <!-- Cart sidebar trigger -->
-                    <li>
-                        <a href="javascript:void(0);" id="open-cart"><i data-feather="shopping-cart"></i></a>
-                    </li>            <!-- Search trigger -->
-                    <li>
-                        <a href="javascript:void(0);" id="open-search"><i data-feather="search"></i></a>
-                        <a href="javascript:void(0);" id="close-search" class="is-hidden is-inactive"><i data-feather="x"></i></a>
-                    </li>            <!-- Mobile mode trigger -->
-                    <li class="is-hidden-desktop is-hidden-tablet">
-                        <a href="javascript:void(0);" id="mobile-mode"><i data-feather="smartphone"></i></a>
-                    </li>        </ul>
-        
-                <!-- User account -->
-                <ul class="bottom-menu is-hidden-mobile">
-                    <li>
-                    
-                    <?php
-                        if(strlen($cook_id) > 0){ // ПОИСК АВТОРИЗАЦИИ
-                            echo("
-                                <img id='user_avatar' src='../../data/users/avatar/".$avatar."' class='round' width='40px' height='40px'>
-                            ");
-                        }else{
-                            echo("
-                                <img data-feather='user' id='user_avatar' src='../../data/users/avatar/default.png' class='round' width='40px' height='40px'>
-                            ");
-                        }
-                    ?>
-                </i></li>
-                </ul>
-            </div>
-        </div>
-        <!-- /Main Sidebar-->
-        
-        <!-- FAB -->
-        <div id="quickview-trigger"  class="menu-fab is-hidden-mobile">
-            <a class="hamburger-btn" href="javascript:void(0);">
-                <span class="menu-toggle">	
-                    <span class="icon-box-toggle"> 	
-                        <span class="rotate">
-                            <i class="icon-line-top"></i>
-                            <i class="icon-line-center"></i>
-                            <i class="icon-line-bottom"></i> 
-                        </span>
-                    </span>
-                </span>
-            </a>
-        </div><!-- /FAB -->
-        
-        <!-- Categories Right quickview -->
-        <div class="category-quickview">
-            <div class="inner">
-                <ul class="category-menu">
-                    <li>
-                        <a href="catalog/">
-                            <span>Для дому</span>
-                            <img src="https://img.icons8.com/fluent/48/000000/cottage.png"/>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="catalog/">
-                            <span>Для пасіки</span>
-                            <img src="https://img.icons8.com/fluent/48/000000/beeswax.png"/>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="catalog/">
-                            <span>Онлайн матеріали</span>
-                            <img src="https://img.icons8.com/fluent/48/000000/book-stack.png"/>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="catalog/">
-                            <span>Робота</span>
-                            <img src="https://img.icons8.com/fluent/48/000000/find-matching-job.png"/>
-                        </a>
-                    </li>
-                </ul>
-        
-                <!--div class="all-categories is-hidden-mobile">
-                    <a href="products.html">Всі категорії</a>
-                    <div class="centered-divider"></div>
-                </div-->
-            </div>
-        </div>
-        
-        <!-- Shop quickview -->
-        <div class="shop-quickview has-background-image" data-background="../assets/images/bg/sidebar.jpeg">
-            <div class="inner">
-                <!-- Header -->
-                <div class="quickview-header">
-                    <h2>Меню</h2>
-                    <span id="close-shop-sidebar"><i data-feather="x"></i></span>
-                </div>
-                <!-- Shop menu -->
-                <ul class="shop-menu">
-                    <li>
-                        <a href="../">
-                            <span>Головна сторінка</span>
-                            <i data-feather="grid"></i>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="../new/">
-                            <span>Нове оголошення</span>
-                            <i data-feather="user"></i>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <span>Мої оголошення</span>
-                            <i data-feather="credit-card"></i>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="#">
-                            <span>Обрані оголошення</span>
-                            <i data-feather="heart"></i>
-                        </a>
-                    </li>
-                </ul>
-                <!-- Profile image -->
-                <ul class="user-profile">
-                    <li>
-                        <a href="account.html">
-                            <?php
-                                if(strlen($cook_id) > 0){ // ПОИСК АВТОРИЗАЦИИ
-                                    echo("
-                                        <img id='user_avatar' src='../../data/users/avatar/".$avatar."' class='round' width='40px' height='40px'>
-                                        <span class='user'>
-                                            <span>".$name."</span>
-                                            <span>В особистий кабінет</span>
-                                        </span>
-                                    ");
-                                }else{
-                                    echo("
-                                        <img id='user_avatar' src='../../data/users/avatar/default.png' class='round' width='40px' height='40px'>
-                                        <a href='../login/'>
-                                            <span class='user'>
-                                                <span>Вітаю, Гість</span>
-                                                <span>Авторизуватися</span>
-                                            </span>
-                                        </a>
-                                    ");
-                                }
-                            ?>  
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- Cart quickview -->
-        <div class="cart-quickview">
-            <div class="inner">
-                <!-- Header -->
-                <div class="quickview-header">
-                    <h2>Мені подобається</h2>
-                    <span id="close-cart-sidebar"><i data-feather="x"></i></span>
-                </div>
-                <!-- Cart quickview body -->
-                <div class="cart-body">
-                    <div class="empty-cart has-text-centered">
-                        <h3>Тут пусто...</h3>
-                        <img src="../assets/images/icons/new-cart.svg" alt="">
-                        <a href="shop.html" class="button big-button rounded">Почніть купувати</a>
-                        <small></small>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Main wrapper -->
-        <div class="shop-wrapper">
-        
-            <!-- Search overlay -->
-            <div class="search-overlay"></div>
-
-            <!-- Search input -->
-            <div class="search-input-wrapper is-desktop is-hidden">
-                <div class="field">
-                    <div class="control">
-                        <input type="text" name="search" autofocus required>
-                        <span id="clear-search" role="button"><i data-feather="x"></i></span>
-                        <span class="search-help">Введіть назву товару, який ви шукаєте</span>
-                    </div>
-                </div>
-            </div>
+    <?php include '../../service/contextmenu.php'; include '../backmwnu.php';?>
+    
             <!-- Left product panel -->
             <div class="product-panel">
                 <!-- Left Header -->
-                <div class="panel-header">
-                    <div class="likes">
-                        <span>Подобається</span>
-                        <i data-feather="heart"></i>
-                    </div>
-                </div>
-        
+                <style>
+                    @media (min-width: 991px){
+                        .yes_mobile{
+                            display: none;
+                        }
+                    }
+                    @media (max-width: 991px){
+                        .yes_mobile{
+                            display: inline;
+                        }
+                    }
+                </style>
+                <br class="yes_mobile"/>
+                <div class='panel-header'>
+                <?php             
+                    if(strlen($cook_id) > 0){
+                    echo(" 
+                            <div id='liked_block' class='likes button buy-button upper-button rounded is-bold raised' style='background: #EF92C6;'>   
+                                <span id='like' onclick='like()' style='font-size: 14px; color: #fff;'>Зберегти в кошик 💛</span>
+                            </div>
+                    ");
+                    }
+                    echo("</div>");
+                    $like_sql = $mysql->query("SELECT * FROM `liked_shop` where `product_id` = $id AND `user_liked` = '$cook_id'");
+                    $likes = $like_sql->fetch_assoc();
+                    if(strlen($likes['product_id']) > 0){
+                        echo("
+                        <script>
+                                document.getElementById('like').textContent = 'Видалити з кошика 💔';
+                                document.getElementById('like').setAttribute('onclick','no_like()');
+                                document.getElementById('liked_block').style.background = '#92BBEF';
+                                document.getElementById('like').style.color = '#535353';
+                        </script>
+                        ");
+                    }else{
+                        echo("
+                        <script>
+                                document.getElementById('like').textContent = 'Зберегти в кошик 💛';
+                                document.getElementById('like').setAttribute('onclick','like()');
+                                document.getElementById('liked_block').style.background = '#EF92C6';
+                                document.getElementById('like').style.color = '#fff';
+                        </script>
+                        ");
+                    }
+                ?>
+                
+                <script>
+                    function like(){
+                        $.ajax({
+                        url: 'like.php',
+                        type: 'POST',
+                        data:{product_id: "<?php echo($id);?>", name_product: "<?php echo($product['name']); ?>", product_image: "<?php echo($product['photo']); ?>" , product_price: "<?php echo($product['price']); ?>"},
+                        success: function(data) {
+                            document.getElementById("like").textContent = "Видалити з кошика 💔";
+                            document.getElementById("like").setAttribute('onclick','no_like()');
+                            document.getElementById("liked_block").style.background = '#92BBEF';
+                            document.getElementById("like").style.color = '#535353';
+                            document.getElementById("all_price").textContent = Number(document.getElementById("all_price").textContent) + Number(<?php echo($product['price']); ?>);
+                            var names = "<?php echo($product['name']); ?>";
+                            var price_p = "<?php echo($product['price']); ?>";
+                            var add_code = "<li class='clearfix' id='block_<?php echo($id);?>'><div style='width: 70px; justify-content: center; display: inline block; text-align: center;'><img src='/shop/catalog/image/<?php echo($product['photo']); ?>' alt='' style='cursor: pointer; float: initial;' onclick='document.location.href = `/shop/product/?id=<?php echo($id);?>`;' /></div><span class='item-meta' style='width: 150px; cursor: pointer;' onclick='document.location.href = `/shop/product/?id=<?php echo($id);?>`;'><span class='item-name' style='width: 150px;'>" + names + "</span><span class='item-price'>" + price_p + "₴</span></span><span class='remove-item'><svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' class='feather feather-x has-simple-popover' data-content='Видалити з кошика' data-placement='top' onclick='del_like(<?php echo($id);?>, <?php echo($product['price']); ?>);' data-target='webuiPopover0'><line x1='18' y1='6' x2='6' y2='18' onclick='del_like(<?php echo($id);?>, <?php echo($product['price']); ?>);'></line><line x1='6' y1='6' x2='18' y2='18' onclick='del_like(<?php echo($id);?>, <?php echo($product['price']); ?>);'></line></svg></span></li>";
+                            document.getElementById("innerProduct").innerHTML = add_code;
+                            document.getElementById("none_card").remove();
+                            document.getElementById("total_sum_block").style.display = "";
+                        }
+                        });
+                    }
+                    function no_like(){
+                        $.ajax({
+                        url: 'no_like.php',
+                        type: 'POST',
+                        data:{product_id: "<?php echo($id);?>"},
+                        success: function(data) {
+                            document.getElementById('like').textContent = 'Зберегти в кошик 💛';
+                            document.getElementById('like').setAttribute('onclick','like()');
+                            document.getElementById('liked_block').style.background = '#EF92C6';
+                            document.getElementById('like').style.color = '#fff';
+                            del_like("<?php echo($id);?>", "<?php echo($product['price']); ?>");
+                        }
+                        });
+                    }
+                </script>
                 <!-- Product image -->
-                <div id="product-view" class="product-image translateLeft">
-                    <img src="https://img.icons8.com/cotton/256/000000/cardboard-box.png" data-action="zoom" alt="">
+                <div id="product-view" class="translateLeft" style="text-align: center; padding: 10% 2% 10% 2%; margin: 0;">
+                    <img style="max-height: 600px;" src="../catalog/image/<?php echo($product['photo']); ?>" data-action="zoom" alt="">
                 </div>
         
                 <!-- Product details -->
@@ -343,21 +195,21 @@
                     <div class="detailed-description">
                         <div class="meta-block">
                             <h3>Назва</h3>
-                            <p>НАЗВАТОВАРУ</p>
+                            <p><?php echo($product['name']); ?></p>
                         </div>
                         <div class="meta-block">
                             <h3>Продавець</h3>
-                            <p>ІМ'ЯПРОДАВЦЯ</p>
+                            <p><?php echo($product['autor_name']); ?></p>
                         </div>
                         <!-- Product colors -->
                         <div class="meta-block">
                             <h3>Телефон</h3>
-                            <p>+380900000000</p>
+                            <p id="phone">+38₀⁰₀⁰₀⁰₀⁰₀⁰₀⁰</p>
                         </div>
                         <!-- Product long description -->
                         <div class="meta-block">
                             <h3 class="spaced">Детальніше про оголошення.</h3>
-                            <p class="spaced">ОПИС</p>
+                            <p class="spaced"><?php echo($product['info']); ?></p>
                         </div>
                     </div>
                 </div>
@@ -370,19 +222,23 @@
                             <!-- Average Rating -->
                             <h3>Автор оголошення</h3>
                             <div class="stars">
-                                <h2>ІМ'ЯПРОДАВЦЯ</h2>
+                                <h2><?php echo($product['autor_name']); ?></h2>
                             </div>
-                            <span>Місто: <small>Харків</small></span>
-                            <span class="add-review modal-trigger" data-modal="review-modal">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-message-circle"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>    
-                            Написати повідомлення.</span>
+                            <span>Місто: <small><?php echo($product['city']); ?></small></span>
+                            <?php
+                            if(strlen($cook_id) > 0){
+                                echo("
+                                <span class='add-review modal-trigger button big-button buy-button upper-button rounded is-bold raised' data-modal='review-modal' style='margin-top: 10px;'>Написати повідомлення.</span>       
+                                ");
+                                }
+                            ?>
                         </div>
         
                         <!-- Customer reviews -->
                         <div class="customer-ratings">
                         
                             <div class="media">
-                                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d162757.7258273428!2d30.392608628224863!3d50.40217023842684!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40d4cf4ee15a4505%3A0x764931d2170146fe!2z0JrQuNC10LIsIDAyMDAw!5e0!3m2!1sru!2sua!4v1618001058895!5m2!1sru!2sua" width="100%" height="360" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                                <iframe src="https://www.google.com/maps/embed/v1/place?key=AIzaSyA5uc5_VAYbdr-ZgkGmr-tlr_iHr8MAmhQ&q=<?php echo($product['city']);?>" width="100%" height="360" style="pointer-events: none; border:0; border-radius: 10px;" allowfullscreen="" loading="lazy"></iframe>
                             </div>
         
                         </div>
@@ -394,7 +250,7 @@
                 <div class="product-actions">
                     <!-- Zoom Action -->
                     <div class="zoom-buttons">
-                        <h4>Переглядів: 0</h4>
+                        <h4>Переглядів: <?php echo($new_look); ?></h4>
                     </div>
                     <!-- Navigation icons -->
                     <div class="right-actions">
@@ -419,27 +275,41 @@
                     <!-- Panel body -->
                     <div class="panel-body">
                         <!-- Product Meta -->
-                        <h3 class="product-name">НАЗВАТОВАРУ <span></span></h3>
-                        <p class="product-description">ОПИС</p>
+                        <h3 class="product-name"><?php echo($product['name']); ?><span></span></h3>
+                        <p class="product-description"><?php echo($product['info']); ?></p>
         
                         <!-- Product controls -->
                         <div class="product-controls">
                             <!-- Price -->
                             <div class="product-price">
                                 <div class="heading">Ціна</div>
-                                <div class="value">100грн</div>
+                                <?php
+                                    if($premium == "yes" && $product['category'] == "Онлайн метаріали"){
+                                        echo("<div class='value has-simple-popover' style='color: #FF8300;' data-content='Знижка 40% для преміум<br>Курс: ≈ ".round($product['price'] * $curs_rub, 2)."₽ | ".round($product['price'] * $curs_usd, 2)."$' data-placement='top'>".$product['price']."<span style='font-size: 20px;'>₴</span></div>");
+                                    }else{
+                                        echo("<div class='value has-simple-popover' data-content='Курс: ≈ ".round($product['price'] * $curs_rub, 2)."₽ | ".round($product['price'] * $curs_usd, 2)."$' data-placement='top'>".$product['price']."<a style='font-size: 20px;'>₴</a></div>");
+                                    }
+                                ?>
                             </div>
                             <!-- Quantity -->
                             <div class="product-quantity">
                                 <div style="text-align: right;">Телефон</div>
                                 <div>
-                                    <h1 style="font-size: 25px;">+38090000000</h1>
+                                    <h1 style="font-size: 25px;" id="phone2">+38₀⁰₀⁰₀⁰₀⁰₀⁰₀⁰</h1>
                                 </div>
                             </div>
                             <!-- Add to Cart -->
                             <div class="add-to-cart">
                                 <div class="heading is-vhidden">Показати номер телефона</div>
-                                <button class="button big-button primary-button upper-button rounded is-bold raised">Показати номер телефона</button>
+                                <button onclick="visPhone()" class="button big-button primary-button upper-button rounded is-bold raised">Показати номер телефона</button>
+                                <br class="yes_mobile"/><br class="yes_mobile"/>
+                                <button class="button big-button buy-button upper-button rounded is-bold raised">Замовити товар</button>
+                                <script>
+                                    function visPhone(){
+                                        document.getElementById("phone").textContent = "<?php echo($product['phone']); ?>";
+                                        document.getElementById("phone2").textContent = "<?php echo($product['phone']); ?>";
+                                    }
+                                </script>
                             </div>
                         </div>
                     </div>
@@ -447,48 +317,53 @@
                     <div class="panel-footer">
                         <div class="footer-inner">
                             <div class="recommended">Інщі товари</div>
-                            <!-- Recommended items -->
+                            <!-- Recommended items   style="overflow: scroll;" -->
                             <div class="columns has-text-centered">
                                 
                                 <div class="column"></div>
-                                
-                                <!-- Item -->
-                                <div class="column is-3">
-                                    <div class="featured-product">
-                                        <div class="image">
-                                            <img src="https://img.icons8.com/cotton/256/000000/cardboard-box.png" alt="">
+
+                                <?php
+                                $product = $mysql->query("SELECT * FROM  (SELECT * FROM `shop_product` ORDER BY id DESC LIMIT 3) T1 ORDER BY RAND()");
+                                $id_product = Array();
+                                $photo = Array();
+                                $name = Array();
+                                $city = Array();
+                                $price = Array();
+
+                                while($result = $product->fetch_assoc()){
+                                    $id_product[] = $result['id'];
+                                    $photo[] = $result['photo'];
+                                    $name[] = $result['name'];
+                                    $price[] = $result['price'];
+                                }
+
+                                $num_prod = 0;
+
+                                if(count($photo) == count($name) && count($price) != 0 && count($name) != 0 ){
+                                    while($num_prod <= (count($name) - 1)){
+                                        echo("
+                                        <!-- Item -->
+                                        <div class='column is-3'>
+                                            <a href='?id=".$id_product[$num_prod]."'>
+                                                <div class='featured-product'>
+                                                    <div class='image' style='height: 100px; text-align: center; display: table-cell; vertical-align: middle;'>
+                                                        <img src='../catalog/image/".$photo[$num_prod]."' style='max-height: 100px; width: auto;'>
+                                                    </div>
+                                                    <div class='product-info has-text-centered'>
+                                                        <a><h3 class='product-name'>".$name[$num_prod]."</h3></a>
+                                                        <p class='product-description' style='color: orange; font-size: 14px;'>".$price[$num_prod]."₴</p>
+                                                    </div>
+                                                </div>
+                                            </a>
                                         </div>
-                                        <div class="product-info has-text-centered">
-                                            <a href="#"><h3 class="product-name">ІТ_НАЗВА</h3></a>
-                                            <p class="product-description">ІТ_ОПИС</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Item -->
-                                <div class="column is-3">
-                                    <div class="featured-product">
-                                        <div class="image">
-                                            <img src="https://img.icons8.com/cotton/256/000000/cardboard-box.png" alt="">
-                                        </div>
-                                        <div class="product-info has-text-centered">
-                                            <a href="#"><h3 class="product-name">ІТ_НАЗВА</h3></a>
-                                            <p class="product-description">ІТ_ОПИС</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!-- Item -->
-                                <div class="column is-3">
-                                    <div class="featured-product">
-                                        <div class="image">
-                                            <img src="https://img.icons8.com/cotton/256/000000/cardboard-box.png" alt="">
-                                        </div>
-                                        <div class="product-info has-text-centered">
-                                            <a href="#"><h3 class="product-name">ІТ_НАЗВА</h3></a>
-                                            <p class="product-description">ІТ_ОПИС</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                
+                                        ");
+                                        $num_prod = $num_prod + 1;
+                                    }
+                                }else{
+                                    echo("<a class='t_mobile' style='color: #322EFF; text-align: center; background-color: #fff; padding: 10px; border-radius: 4px;'>Ще немає рекомендацій. 💫</a>");
+                                }
+
+                                ?>
                                 
                                 <div class="column"></div>
                             </div>
@@ -507,37 +382,20 @@
             <div class="modal-content">
                 <div class="box">
                     <div class="box-header">
-                        <img src="../assets/images/avatars/elie.jpg" alt="">
-                        <span>Rate this product</span>
+                        <span>Зв'язщок з автором</span>
                         <div class="modal-delete"><i data-feather="x"></i></div>
                     </div>
-                    <div class="box-body">
-        
-                        <fieldset class="rating">
-                            <input type="radio" id="star5" name="rating" value="5" /><label class = "full" for="star5" title="Awesome - 5 stars"></label>
-                            <input type="radio" id="star4half" name="rating" value="4 and a half" /><label class="half" for="star4half" title="Great - 4.5 stars"></label>
-                            <input type="radio" id="star4" name="rating" value="4" /><label class = "full" for="star4" title="Very good - 4 stars"></label>
-                            <input type="radio" id="star3half" name="rating" value="3 and a half" /><label class="half" for="star3half" title="Pretty good - 3.5 stars"></label>
-                            <input type="radio" id="star3" name="rating" value="3" /><label class = "full" for="star3" title="Good - 3 stars"></label>
-                            <input type="radio" id="star2half" name="rating" value="2 and a half" /><label class="half" for="star2half" title="Average - 2.5 stars"></label>
-                            <input type="radio" id="star2" name="rating" value="2" /><label class = "full" for="star2" title="Mediocre - 2 stars"></label>
-                            <input type="radio" id="star1half" name="rating" value="1 and a half" /><label class="half" for="star1half" title="Weak - 1.5 stars"></label>
-                            <input type="radio" id="star1" name="rating" value="1" /><label class = "full" for="star1" title="Bad - 1 star"></label>
-                            <input type="radio" id="starhalf" name="rating" value="half" /><label class="half" for="starhalf" title="Terrible - 0.5 stars"></label>
-                        </fieldset>
-        
+                    <div class="box-body">   
                         <div class="control">
-                            <textarea class="textarea is-button" placeholder="write something..."></textarea>
+                            <textarea class="textarea is-button" placeholder="Повідомлення" style="font-family: Unecoin;"></textarea>
                             <div class="textarea-button">
-                                <button class="button primary-button raised">Post review</button>
+                                <button class="button primary-button raised" style="font-family: Unecoin;">Відправити</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <!--button class="modal-close is-large" aria-label="close"></button-->
         </div>
-        <!-- /Modal -->
         <!-- Concatenated plugins -->
         <script src="../assets/js/app.js"></script>
         <!-- Helios js -->
