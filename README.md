@@ -4,5 +4,4 @@
 <img src="https://i.ibb.co/cYkpw25/image.png" alt="image" border="0">
 
 # Авторские права
-Разработчик Станислав Мирошниченко.<br>
 Стартап Unesell Studio.
