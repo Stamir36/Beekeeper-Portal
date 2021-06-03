@@ -8,7 +8,7 @@
     include "../service/config.php";
     $mysql = new mysqli($Host, $User, $Password, $Database);
     */
-    $mysql = new mysqli('localhost', 'u663391372_beekeeper', 'Beekeeper2021', 'u663391372_beekeeper');
+    $mysql = new mysqli();
     
 
     $result = $mysql->query("SELECT * FROM `forum_sub_mess` WHERE `id_main_mess` =  $id");
