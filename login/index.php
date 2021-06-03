@@ -187,8 +187,30 @@
               <div class="col-12">
                 <input type="submit" class="btn w-100 margin-t-3 btn_account bg-orange-red c-white rounded-8" style="margin-bottom: 20px;" name="login_chek" value="Вход в аккаунт" />
                 <a style="font-size: 14px;">Другой способ входа.</a>
-                <a href="#" class="btn w-100 btn_account rounded-8" style="margin-top: 10px; background: rgb(235, 235, 220); color: #000">Вход с помощью Google</a>
-                <a href="#" class="btn w-100 btn_account c-white rounded-8" style="margin-top: 10px; background: rgb(30, 102, 236);">Вход с помощью Facebook</a>
+
+                <?php 
+                    $params = array(
+                      'client_id'     => '276274544204-64t8sndnhj9ldhrlv8gkfbou5mqil6tg.apps.googleusercontent.com',
+                      'redirect_uri'  => 'https://beesportal.online/redirect',
+                      'response_type' => 'code',
+                      'scope'         => 'https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile',
+                      'state'         => '123'
+                    );
+                    
+                    $url = 'https://accounts.google.com/o/oauth2/auth?' . urldecode(http_build_query($params));
+                    echo ("<a href='".$url."' class='btn w-100 btn_account rounded-8' style='margin-top: 10px; background: rgb(235, 235, 220); color: #000'>Вход с помощью Google</a>");
+
+                    $params = array(
+                      'client_id'     => '593035361614028',
+                      'redirect_uri'  => 'https://beesportal.online/redirect/facabook.php',
+                      'scope'         => 'email',
+                      'response_type' => 'code',
+                      'state'         => '123'
+                    );
+                     
+                    $url = 'https://www.facebook.com/dialog/oauth?' . urldecode(http_build_query($params));
+                    echo "<a href='" . $url . "' class='btn w-100 btn_account c-white rounded-8' style='margin-top: 10px; background: rgb(30, 102, 236);'>Вход с помощью Facebook</a>";
+                ?>
               </div>
               
             </form>

@@ -14,13 +14,14 @@
     $result = $mysql->query("SELECT * FROM `wiki` WHERE `id` =  $id");
     $forum = $result->fetch_assoc();
     $cout = 0;
+    echo "[\n";
+    echo json_encode($forum_mess, JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE);
     while($forum = $result->fetch_assoc()){
         $cout++;
     }
 
     $result_m = $mysql->query("SELECT * FROM `wiki` WHERE `id` =  $id");
     $forum_mess = $result_m->fetch_assoc();
-    echo "[\n";
     $i = 0;
     while($forum_mess = $result_m->fetch_assoc()){
         $i++;

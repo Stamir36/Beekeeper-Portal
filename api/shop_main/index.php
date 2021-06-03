@@ -10,16 +10,18 @@
     $result = $mysql->query("SELECT * FROM `shop_product`");
     $forum = $result->fetch_assoc();
     $cout = 0;
+    echo "[\n";
+    echo json_encode($forum, JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE);
     while($forum = $result->fetch_assoc()){
         $cout++;
     }
 
     $result = $mysql->query("SELECT * FROM `shop_product`");
     $forum = $result->fetch_assoc();
-    echo "[\n";
     $i = 0;
     while($forum = $result->fetch_assoc()){
         $i++;
+        echo ",\n";
         echo json_encode($forum, JSON_PRETTY_PRINT|JSON_UNESCAPED_UNICODE);
         if($i != $cout){
             echo ",\n";
