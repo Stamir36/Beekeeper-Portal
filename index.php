@@ -24,10 +24,10 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description"
-    content="Новая платформа и букс для рекламодателей и заработка в интернете без вложений! Рекламируйте свои ссылки от 0.10р и получайте качественных пользователей, или зарабатывайте на просмотре сайтов, выполения заданий или социальных сетях." />
+    content="Портал українського пасічника. Форум, оголошення, контент, вікі - все для вас!" />
   <meta name="keywords"
     content="HTML, CSS, JavaScript, Bootstrap, jQuery, Rakon, Themeforest, Template, envato, SASS, SCSS, HTML5, landing page, SaaS Product, SaaS Modern,  MultiPurpose, Crypto, Currency, ICO, Hosting, Agency, Mobile, App, Interior, Charity" />
-  <meta name="author" content="Rakon - Creative Multi-Purpose HTML5 Templates" />
+  <meta name="author" content="Unesell Studio" />
 
   <title>Beekeeper portal - портал і форум пасічників</title>
   <!-- favicon -->
