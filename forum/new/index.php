@@ -238,6 +238,7 @@
                 <div id="files" style="padding-bottom: 15px;">
                   <label for="exampleFormControlInput1">Правила написання нових тем:</label>
                   <ul id="file-list">
+                      <li style="padding-left: 10px; color: tomato;"> ● Заборонено використовувати "ОЛЕГА" і його ім'я.</li>
                       <li style="padding-left: 10px; color: tomato;"> ● Заборонено писати нецензурну лексику.</li>
                       <li style="padding-left: 10px; color: tomato;"> ● Рекламувати щось або когось.</li>
                       <li style="padding-left: 10px; color: tomato;"> ● Розміщувати і обговорювати порнографію.</li>

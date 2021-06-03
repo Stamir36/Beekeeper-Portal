@@ -34,10 +34,10 @@
         header('Location: ?page=1');
       }
   
-      $OFFSET = $page * 10 - 10; //С какой записи выводить
-      $product = $mysql->query("SELECT * FROM `shop_product` WHERE `autor_name` = '$name' ORDER BY $settings_search limit 10 OFFSET $OFFSET");
+      $OFFSET = $page * 5 - 5; //С какой записи выводить
+      $product = $mysql->query("SELECT * FROM `shop_product` WHERE `autor_name` = '$name' ORDER BY $settings_search limit 5 OFFSET $OFFSET");
   
-      $num_page = ceil($count / 10); //Количество страниц
+      $num_page = ceil($count / 5); //Количество страниц
     /*      <?php echo();?>      */
 ?>
 <!DOCTYPE html>
@@ -172,9 +172,17 @@
                                             }
                                         }else{
                                             echo("
-                                                <div style='padding: 20px; width: 100%; background-color: #fff; border-radius: 10px;'>
-                                                    <a style='color:red;'>Нічого не знайдено 😥 <br/>
-                                                    Спробуйте змінити запит, або параметри.</a>
+                                                <div class='columns is-account-grid is-multiline'>
+                                                    <div class='column is-12'>
+                                                        <div class='flat-card is-auto empty-cart-card'>
+                                                            <div class='empty-cart has-text-centered'>
+                                                                <h3>Немає жодного оголошення 😥</h3>
+                                                                <img src='https://img.icons8.com/cotton/512/000000/create-new--v4.png'/>
+                                                                <a href='../new/' class='button big-button rounded'>Створити оголошення</a>
+                                                                <small>Настав час продавати та заробляти!</small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             ");
                                         }
@@ -182,7 +190,79 @@
                                     </ul>
                                 </div>
                             </div>
+                            <nav class="wishlist-pagination" style="padding-top: 15px; z-index: -10; justify-content:left;">
+                                <ul class="pagination" style="text-align: left;">
+                                    
+                                    <?php
+                                    
+                                    if($num_page == 1){
+                                    echo("
+                                        <li class='page-item active'>
+                                            <a class='page-link'>1</a>
+                                        </li>
+                                        <li class='page-item disabled'>
+                                            <a class='page-link'>Наступна</a>
+                                        </li>
+                                    ");
+                                    }else{
+                                    if($page == 1){
+                                        $back = "../my/";
+                                        echo("
+                                        <li class='page-item disabled' style='pointer-events: none;'>
+                                        <a class='page-link' onclick='document.location.href = `../my/?page=".($page - 1)."`;' tabindex='-1'>Попередня</a>
+                                        </li>
+                                    ");
+                                    }else{
+                                        echo("
+                                        <li class='page-item' style='cursor: pointer;'>
+                                        <a class='page-link' onclick='document.location.href = `../my/?page=".($page - 1)."`;' tabindex='-1'>Попередня</a>
+                                        </li>
+                                    ");
+                                    }
 
+                                    $start_page = $page;
+                                    $end_page = $start_page + 3;
+                                    $progress = true;
+
+                                    if($page != 1){
+                                        echo("
+                                        <li class='page-item' style='cursor: pointer; z-index: 0;'><a class='page-link' onclick='document.location.href = `../my/?page=".($start_page - 1)."`;'>".($start_page - 1)."</a></li>
+                                        ");
+                                    }
+
+                                    while ($start_page < $end_page && $start_page <= $num_page) {
+                                        if($start_page == $page){
+                                        echo("
+                                            <li class='page-item active' style='z-index: 0;'><a class='page-link'>".$start_page."</a></li>
+                                        ");
+                                        }else{
+                                        echo("
+                                            <li class='page-item' style='cursor: pointer; z-index: 0;'><a class='page-link' onclick='document.location.href = `../my/?page=".$start_page."`;'>".$start_page."</a></li>
+                                        ");
+                                        }
+                                        $start_page = $start_page + 1;
+                                    }
+
+                                    if ($num_page > 1 && $page > 0 && $num_page != $page) {
+                                        $back = "../my/";
+                                    echo("
+                                        <li class='page-item' style='cursor: pointer;'>
+                                            <a class='page-link' onclick='document.location.href = `../my/?page=".($page + 1)."`;' tabindex='-1'>Наступна</a>
+                                        </li>
+                                    ");
+                                    }else{
+                                        $back = "../my/";
+                                        echo("
+                                        <li class='page-item disabled'>
+                                            <a class='page-link' onclick='document.location.href = `../my/?page=".($page + 1)."`;' tabindex='-1'>Наступна</a>
+                                        </li>
+                                        ");
+                                    }                     
+                                    }
+
+                                    ?>
+                                </ul>
+                            </nav>
                         </div>
                     </div>
                 </div>
@@ -205,6 +285,7 @@
             <div class="modal-content">
                 <div class="box">
                     <div class="box-header">
+                        <i data-feather='trash'></i>
                         <span>Видалення.</span>
                         <div class="modal-delete"><i data-feather="x"></i></div>
                     </div>

@@ -199,7 +199,7 @@
                         </div>
                         <div class="meta-block">
                             <h3>Продавець</h3>
-                            <p><?php echo($product['autor_name']); ?></p>
+                            <p><?php $name_autor = $product['autor_name']; echo($name_autor); ?></p>
                         </div>
                         <!-- Product colors -->
                         <div class="meta-block">
@@ -228,7 +228,7 @@
                             <?php
                             if(strlen($cook_id) > 0){
                                 echo("
-                                <span class='add-review modal-trigger button big-button buy-button upper-button rounded is-bold raised' data-modal='review-modal' style='margin-top: 10px;'>Написати повідомлення.</span>       
+                                <span class='add-review modal-trigger button big-button buy-button upper-button rounded is-bold raised' data-modal='review-modal' style='margin-top: 10px;' id='send_Buttom'>Написати повідомлення.</span>       
                                 ");
                                 }
                             ?>
@@ -303,7 +303,7 @@
                                 <div class="heading is-vhidden">Показати номер телефона</div>
                                 <button onclick="visPhone()" class="button big-button primary-button upper-button rounded is-bold raised">Показати номер телефона</button>
                                 <br class="yes_mobile"/><br class="yes_mobile"/>
-                                <button class="button big-button buy-button upper-button rounded is-bold raised">Замовити товар</button>
+                                <button class="button big-button buy-button upper-button rounded is-bold raised" onclick="document.location.href = '/shop/checkout/?prod=<?php echo($id);?>';">Замовити товар</button>
                                 <script>
                                     function visPhone(){
                                         document.getElementById("phone").textContent = "<?php echo($product['phone']); ?>";
@@ -375,7 +375,9 @@
             <!-- /Right product panel -->
         </div>
         <!-- /Main wrapper -->
-        
+        <div id='note_box' class="alert alert-success alert-dismissible fade show" role="alert" style='border-radius: 15px; background-color: rgb(132, 200, 255); z-index: 100000; display: none; position: fixed; width: 350px; min-height: 55px; right: 22px; bottom: 10px; text-align: left; border: 1px solid black;'>
+            <p id='note_message' style='color: rgb(0, 0, 0); margin: 10px; font-weight: bold;  text-shadow: 1px 1px 1px #FFFFFF; filter: dropshadow(color=#FFFFFF, offx=1, offy=1);'></p>
+        </div>
         <!-- Modal -->
         <div id="review-modal" class="modal review-modal">
             <div class="modal-background"></div>
@@ -383,13 +385,44 @@
                 <div class="box">
                     <div class="box-header">
                         <span>Зв'язщок з автором</span>
-                        <div class="modal-delete"><i data-feather="x"></i></div>
+                        <div class="modal-delete" id="close_modal"><i data-feather="x"></i></div>
                     </div>
                     <div class="box-body">   
                         <div class="control">
-                            <textarea class="textarea is-button" placeholder="Повідомлення" style="font-family: Unecoin;"></textarea>
-                            <div class="textarea-button">
-                                <button class="button primary-button raised" style="font-family: Unecoin;">Відправити</button>
+                            <textarea class="textarea is-button" placeholder="Повідомлення" style="font-family: Unecoin; color:black; " id="mess_autore"></textarea>
+                            <div class="textarea-button"> 
+                                <button class="button primary-button raised" style="font-family: Unecoin;" onclick="send_mess_prod();">Відправити</button>
+                                <script>
+                                    function throw_message(str) {
+                                        $('#note_message').html(str);
+                                        $("#note_box").fadeIn(500).delay(3000).fadeOut(500);
+                                    }
+                                    function send_mess_prod(){
+                                        var text_box = document.getElementById("mess_autore").value;
+                                        $.ajax({
+                                                url: 'send_mess.php',
+                                                type: 'POST',
+                                                data:{id_product: "<?php echo($id);?>", text: text_box, autor: "<?php echo($user['name']);?>", p_autor: "<?php echo($name_autor); ?>"},
+                                                success: function(data) {
+                                                    $("#note_box").fadeOut(0);
+                                                    throw_message("Повідомлення відправлено.");
+                                                    document.getElementById("close_modal").click();
+                                                    document.getElementById("send_Buttom").setAttribute('onclick','no_mess()');
+                                                    document.getElementById("send_Buttom").setAttribute('data-modal','');
+                                                    document.getElementById("send_Buttom").textContent = "Подівомлення відправлено";
+                                                },
+                                                error: function(data){
+                                                    $("#note_box").fadeOut(0);
+                                                    throw_message("Помилка.");
+                                                    document.getElementById("close_modal").click();
+                                                }
+                                         });
+                                    }
+                                    function no_mess(){
+                                        $("#note_box").fadeOut(0);
+                                        throw_message("Ви вже написали повідомлення.");
+                                    }
+                                </script>
                             </div>
                         </div>
                     </div>

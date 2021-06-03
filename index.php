@@ -127,14 +127,14 @@
                           </div>
                           <div class="icon-box">
                               <div class="icon"><img src="https://img.icons8.com/fluent/48/000000/sorting-answers.png" style="width: 30px; height: 30px;"/></div>
-                              <div class="text_menu">
+                              <div class="text_menu" style="cursor: pointer;" onclick="document.location.href = '/forum/category/';">
                                   <div class="title">Дивитися категорії <i class="far fa-arrow-right"></i></div>
                                   <div class="sub-text">Всі категорії та теми на форумі</div>
                               </div>
                           </div>
                           <div class="icon-box">
                               <div class="icon"><img src="https://img.icons8.com/fluent/48/000000/search.png" style="width: 30px; height: 30px;"/></div>
-                              <div class="text_menu">
+                              <div class="text_menu" style="cursor: pointer;" onclick="document.location.href = '/forum/';">
                                   <div class="title">Пошук питання <i class="far fa-arrow-right"></i></div>
                                   <div class="sub-text">Виконати пошук по темам та питанням.</div>
                               </div>
@@ -147,7 +147,7 @@
                           <a href="shop/" >Оголошення</a>
                       </div>
                       <div class="sub-menu double">
-                          <div class="icon-box gb a">
+                          <div class="icon-box gb a" onclick="document.location.href = '/shop/catalog/?c=all';">
                               <div class="icon"><img src="https://img.icons8.com/fluent/48/000000/search-property.png" style="width: 30px; height: 30px;"/></div>
                               <div class="text_menu">
                                   <div class="title">Всі оголошення <i class="far fa-arrow-right"></i></div>
@@ -156,21 +156,21 @@
                           </div>
                           <div class="icon-box gb b">
                               <div class="icon"><img src="https://img.icons8.com/fluent/48/000000/four-squares.png" style="width: 30px; height: 30px;"/></div>
-                              <div class="text_menu">
+                              <div class="text_menu" onclick="document.location.href = '/shop/';">
                                   <div class="title">Категорії <i class="far fa-arrow-right"></i></div>
                                   <div class="sub-text">Теми оголошень</div>
                               </div>
                           </div>
                           <div class="icon-box gb c">
-                              <div class="icon"><img src="https://img.icons8.com/fluent/48/000000/card-security.png" style="width: 30px; height: 30px;"/></div>
-                              <div class="text_menu">
-                                  <div class="title">Про оплату <i class="far fa-arrow-right"></i></div>
-                                  <div class="sub-text">Розповімо, як безпечно платити</div>
+                              <div class="icon"><img src="https://img.icons8.com/emoji/48/000000/plus-emoji.png" style="width: 30px; height: 30px;"/></div>
+                              <div class="text_menu" onclick="document.location.href = '/shop/new/';">
+                                  <div class="title">Подати оголошення <i class="far fa-arrow-right"></i></div>
+                                  <div class="sub-text">Продати все що завгодно.</div>
                               </div>
                           </div>
                           <div class="icon-box gb d">
                               <div class="icon"><img src="https://img.icons8.com/fluent/48/000000/bursts.png" style="width: 30px; height: 30px;"/></div>
-                              <div class="text_menu">
+                              <div class="text_menu" onclick="document.location.href = '/shop/my/';">
                                   <div class="title">Мої оголошення<i class="far fa-arrow-right"></i></div>
                                   <div class="sub-text">Все що ви опублікували</div>
                               </div>
@@ -178,7 +178,7 @@
                           <div class="icon-box gb e">
                             <a href="service/premium/">
                               <div class="icon"><img src="https://img.icons8.com/fluent/48/000000/expensive-2.png" style="width: 30px; height: 30px;"/></div>
-                              <div class="text_menu">
+                              <div class="text_menu" onclick="document.location.href = '/service/premium/';">
                                   <div class="title">Преміум <i class="far fa-arrow-right"></i></div>
                                   <div class="sub-text">Нові можливості</div>
                               </div>
@@ -186,7 +186,7 @@
                           </div>
                           <div class="icon-box gb f">
                               <div class="icon"><img src="https://img.icons8.com/fluent/48/000000/love-circled.png" style="width: 30px; height: 30px;"/></div>
-                              <div class="text_menu">
+                              <div class="text_menu" onclick="document.location.href = '/shop/liked/';">
                                   <div class="title">Мені подобається<i class="far fa-arrow-right"></i></div>
                                   <div class="sub-text">Збережені закладки</div>
                               </div>
@@ -197,55 +197,13 @@
                           <div class="sub-menu-holder"></div>
                       </div>
                   </div>
-                  <div class="menu-item highlight">
+
+                  <div style="padding-top: 8px; padding-left: 25px;">
                       <div class="menu-text">
                           <a href="wiki/">Енциклопедія</a>
                       </div>
-                      <div class="sub-menu triple">
-                          <div class="top-container gb c icon-box">
-                              <div class="icon big"><img src="https://img.icons8.com/fluent/48/000000/books.png" style="width: 30px; height: 30px;"/></div>
-                              <div class="text_menu">
-                                  <div class="title">Вся енциклопедія</div>
-                                  <div class="sub-text">Читайте та шукайте всі цікаві матеріали</div>
-                              </div>
-                          </div>
-                          <div class="box">
-                              <h3>Пасічництво</h3>
-                              <a href="#">Безкоштовні книги</a>
-                              <a href="#">Платні матеріали</a>
-                              <a href="#">Написати статтю</a>
-                          </div>
-                          <div class="box">
-                              <h3>Система</h3>
-                              <a href="#">Для компаній</a>
-                              <a href="#">Для розробників</a>
-                          </div>
-                          <div class="icon-box flat">
-                              <div class="icon"><i class="fal fa-plug"></i></div>
-                              <div class="text_menu">
-                                  <div class="title">API системи <i class="far fa-arrow-right"></i></div>
-                              </div>
-                          </div>
-                          <div class="icon-box flat">
-                              <div class="icon"><i class="fal fa-comments"></i></div>
-                              <div class="text_menu">
-                                  <div class="title">Служба підтримки <i class="far fa-arrow-right"></i></div>
-                              </div>
-                          </div>
-                          <div class="icon-box flat">
-                              <div class="icon"><i class="fal fa-phone-volume"></i></div>
-                              <div class="text_menu">
-                                  <div class="title">Онлайн чат системи<i class="far fa-arrow-right"></i></div>
-                              </div>
-                          </div>
-                          <div class="icon-box flat">
-                              <div class="icon"><i class="fal fa-book-spells"></i></div>
-                              <div class="text_menu">
-                                  <div class="title">Документація <i class="far fa-arrow-right"></i></div>
-                              </div>
-                          </div>
-                      </div>
                   </div>
+
                   <div class="menu-item">
                       <div class="menu-text">
                           <a href="service/support/">Підтримка</a>
@@ -261,15 +219,15 @@
                           <div class="icon-box">
                               <div class="icon"><img src="https://img.icons8.com/fluent/48/000000/telegram-app.png" style="width: 30px; height: 30px;"/></div>
                               <div class="text_menu">
-                                  <div class="title">Соціальні мережі <i class="far fa-arrow-right"></i></div>
+                                  <a class="title" href="https://t.me/unesell">Соціальні мережі <i class="far fa-arrow-right"></i></a>
                                   <div class="sub-text">Підписуйтесь!</div>
                               </div>
                           </div>
                           <div class="icon-box">
                               <div class="icon"><img src="https://img.icons8.com/fluent/48/000000/computer-chat.png" style="width: 30px; height: 30px;"/></div>
                               <div class="text_menu">
-                                  <div class="title">Правила та база знань <i class="far fa-arrow-right"></i></div>
-                                  <div class="sub-text">Якщо є питання, то тобі сюди.</div>
+                                  <div class="title"style="cursor: pointer;" onclick="document.location.href = '/service/rule/';">Правила корристування сайтом<i class="far fa-arrow-right"></i></div>
+                                  <div class="sub-text">Регламент та угода користувача</div>
                               </div>
                           </div>
                           <div class="sub-menu-holder"></div>
@@ -288,11 +246,11 @@
                 <?php 
                 if(strlen($cook_id) > 0){
                   echo("
-                      <a href='profile/' class='btn btn_sm_primary border-0 sweep_letter sweep_top bg-blue c-white rounded-pill'>
+                      <!--a href='profile/' class='btn btn_sm_primary border-0 sweep_letter sweep_top bg-blue c-white rounded-pill'>
                       <div class='inside_item'>
                         <span data-hover='Профіль ✌'>Особистий кабінет</span>
                       </div>
-                    </a>
+                    </a-->
                     <a href='service/out.php' class='btn btn_sm_primary effect-letter rounded-8'>
                     Вихід
                   </a>
@@ -354,7 +312,7 @@
                     }
                   ?>
 
-                  <div class="margin-t-8">
+                  <!--div class="margin-t-8">
                     <button type="button" class="btn btn_video" data-toggle="modal"
                       data-src="№" data-target="#mdllVideo">
                       <div class="scale rounded-circle play_video">
@@ -362,7 +320,7 @@
                       </div>
                       <span class="ml-3 font-s-16 c-dark">Дивитись відео проекту</span>
                     </button>
-                  </div>
+                  </div-->
                 </div>
               </div>
               <div class="col-md-7" style="padding: 0;">
@@ -856,10 +814,17 @@
                             <img src="assets/img/icons/1f647-2640.png" />
                           </div>
                           <div class="info_txt">
-                            <h4>0
+                            <h4>
+                            <?php
+                          
+                              $res = $mysql->query("SELECT count(*) FROM wiki");
+                              $row = $res->fetch_row();
+                              echo($row[0]);
+                  
+                            ?>
                             </h4>
                             <p>
-                              Повідомлень в підтримку
+                              Статей на вікі
                             </p>
                           </div>
                         </div>
@@ -904,7 +869,7 @@
                     </p>
                   </div>
                   <div class="app_smartphone">
-                    <div class="btn--app mb-3 mb-sm-0">
+                    <!--div class="btn--app mb-3 mb-sm-0">
                       <a class="media" href="#" target="_blank">
                         <div class="icon bg-blue">
                           <i class="tio google_play"></i>
@@ -916,11 +881,11 @@
                           <h4>Play Market</h4>
                         </div>
                       </a>
-                    </div>
+                    </div-->
                     <div class="btn--app">
                       <a class="media" href="#" target="_blank">
                         <div class="icon">
-                          <img src="https://img.icons8.com/metro/26/000000/download.png"/>
+                          <i class="tio download"></i>
                         </div>
                         <div class="media-body txt">
                           <div>
@@ -931,13 +896,10 @@
                       </a>
                     </div>
                   </div>
-                  <div class="dashed-line margin-my-3"></div>
-                  <!-- Start Testimonial -->
+                  <!--div class="dashed-line margin-my-3"></div>
                   <div class="block_testimonial">
                     <h3 class="c-white">Що думають наші користувачі про нас?</h3>
 
-                    <!-- Start Testimonial -->
-                    <!-- Swiper -->
                     <div class="swiper-container gallery-top content_swiper">
                       <div class="swiper-wrapper">
 
@@ -954,7 +916,7 @@
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </div-->
                 </div>
                 <div class="col-lg-5 ml-lg-auto">
                   <div class="mobile_app">
@@ -987,29 +949,25 @@
                 Найкраще місце для пасичників та бджолярів! Перевір це сам!
               </p>
               <div class="address">
-                <span>@2021 Beekeeper portal / Unesell Project</span>
-                <span>Зв'язок: <a href="mail:unesell@outlook.com">unesell@outlook.com</a></span>
+                <span>@2021 Beekeeper portal / Unesell Studio</span>
+                <span>Зв'язок: <a href="mailto:support@beesportal.online">support@beesportal.online</a></span>
               </div>
             </div>
           </div>
           <div class="col-6 col-md-6 col-lg-2">
             <div class="item_links">
-              <h4>Сервис</h4>
-              <a class="nav-link" href="">Новини</a>
-              <a class="nav-link" href="">Правила сервиса</a>
-              <a class="nav-link" href="">База знань</a>
-              <a class="nav-link" href="">Підтримка</a>
+              <h4>Система</h4>
+              <a class="nav-link" href="service/premium/">Преміум</a>
+              <a class="nav-link" href="service/rule/">Правила сервиса</a>
+              <a class="nav-link" href="service/support/">Підтримка</a>              
             </div>
           </div>
-          <div class="col-6 col-md-6 col-lg-2">
+          <!--div class="col-6 col-md-6 col-lg-2">
             <div class="item_links">
-              <h4>Стартап</h4>
-              <a class="nav-link" href="">Про нас</a>
+              <h4>Проект</h4>
               <a class="nav-link" href="">Автори</a>
-              <a class="nav-link" href="">Контаки</a>
-              <a class="nav-link" href="">Приєднатися</a>
             </div>
-          </div>
+          </div-->
         </div>
         <div class="col-12 text-center padding-t-4">
           <div class="copyright">
@@ -1038,7 +996,7 @@
             <i class="tio clear"></i>
           </button>
           <h5>Ми використовуємо cookie 🍪</h5>
-          <p>Все за правилами <a href="#">системи</a>.</p>
+          <p>Все за правилами <a href="service/rule/">системи</a>.</p>
         </div>
       </div>
     </div>
@@ -1086,8 +1044,10 @@
   vendor file
   ============
    -->
-  <script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/CustomEase3.min.js'></script>
-  <script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/CustomWiggle3.min.js'></script>
+  
+  <script src='assets/js/new.js'></script>
+
+
   <script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/3.3.1/gsap.min.js'></script>
   <script  src="assets/js/main_girl.js"></script>
   

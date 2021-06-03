@@ -113,7 +113,90 @@
                     </div>
                 </div>
                 <div class="section">
-                    <!-- Container -->
+
+                <!-- Container Top -->
+                <div class="container">
+                    <div class="columns account-header">
+                        <div class="column is-tablet-landscape-padded">
+                            <!-- Title -->
+                            <div class="account-title">
+                                <h2 style="z-index: 1;">VIP-оголошення!</h2>
+                                <img class="brand-filigrane" src="https://img.icons8.com/fluent/48/000000/vip.png" style="opacity: 0.2;">
+                            </div>  
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content">
+                    <div class="columns is-gapless is-vcentered">
+                        <div class="row">
+                            <style>
+                                @media (min-width: 991px){
+                                    .t_mobile{
+                                        width: 100%;
+                                        margin: 15px;
+                                    }
+                                }
+                                @media (max-width: 991px){
+                                    .t_mobile{
+                                        width: 90%;
+                                        margin-top: 15px;
+                                    }
+                                }
+                            </style>
+                        <?php
+                            $product = $mysql->query("SELECT * FROM `shop_product` WHERE `premium` = 'yes' ORDER BY id DESC limit 20");
+                            $id_product = Array();
+                            $photo = Array();
+                            $name = Array();
+                            $city = Array();
+                            $price = Array();
+                            $look = Array();
+
+                            while($result = $product->fetch_assoc()){
+                                $id_product[] = $result['id'];
+                                $photo[] = $result['photo'];
+                                $name[] = $result['name'];
+                                $city[] = $result['city'];
+                                $price[] = $result['price'];
+                                $look[] = $result['look'];
+                            }
+
+                            $num_prod = 0;
+
+                            if(count($photo) == count($name) && count($city) != 0 && count($name) != 0 ){
+                                while($num_prod <= (count($name) - 1)){
+                                    echo("
+                                    <!-- Краточка -->
+                                    <div style='width: 320px; padding: 10px;'>
+                                                <div class='flat-card'>
+                                                    <div class='image'>
+                                                        <img src='catalog/image/".$photo[$num_prod]."' data-action='zoom' alt=''>
+                                                    </div>
+                                                    <div class='product-info '>
+                                                        <a href='product/?id=".$id_product[$num_prod]."'><h3 class='product-name'>".$name[$num_prod]."</h3></a>
+                                                        <a href='product/?id=".$id_product[$num_prod]."'><p class='product-description'>".$city[$num_prod]."</p></a>
+                                                        <p class='product-price' style='margin-top: 10px;'> ".$price[$num_prod]."</p>
+                                                    </div>
+                                                    <div class='actions'>
+                                                        <div class='like'><a style='font-size: 10px; margin-bottom: 5px;'>Переглядів: ".$look[$num_prod]."</a></div>
+                                                    </div>
+                                                </div>
+                                        </div>
+                                    <!-- Конец карточки -->
+                                    ");
+                                    $num_prod = $num_prod + 1;
+                                }
+                            }else{
+                                echo("<a class='t_mobile' href='new/' style='color: #322EFF; text-align: center; background-color: #fff; padding: 10px; border-radius: 4px;'>Ще немає жодного оголошення. Будь першим!</a>");
+                            }
+                        ?>
+                                    
+                        </div>
+                    </div>
+                </div>
+
+                    <!-- Container ALL -->
                     <div class="container">
                         <div class="columns account-header">
                             <div class="column is-tablet-landscape-padded">
@@ -126,9 +209,9 @@
                                 <!-- tabs -->
                                 <div class="tabs account-tabs">
                                     <ul>
-                                        <a class="button feather-button is-small primary-button" style="margin-left: 3px;">Найкращі</a>
-                                        <a class="button feather-button is-small secondary-button" style="margin-left: 3px;">Нові</a>
-                                        <a class="button feather-button is-small accent-button" style="margin-left: 3px;">Всі оголошення</a>
+                                        <a class="button feather-button is-small secondary-button" style="margin-left: 3px;" href="catalog/?c=all&sett=new">Нові</a>
+                                        <a class="button feather-button is-small primary-button" style="margin-left: 3px;" href="catalog/?c=all&sett=pup">Найнижча ціна</a>
+                                        <a class="button feather-button is-small accent-button" style="margin-left: 3px;" href="catalog/?c=all&sett=pdown">Найвища ціна</a>
                                     </ul>
                                 </div>    
                             </div>
@@ -159,6 +242,7 @@
                                 $name = Array();
                                 $city = Array();
                                 $price = Array();
+                                $look = Array();
 
                                 while($result = $product->fetch_assoc()){
                                     $id_product[] = $result['id'];
@@ -166,6 +250,7 @@
                                     $name[] = $result['name'];
                                     $city[] = $result['city'];
                                     $price[] = $result['price'];
+                                    $look[] = $result['look'];
                                 }
 
                                 $num_prod = 0;
@@ -185,8 +270,7 @@
                                                             <p class='product-price' style='margin-top: 10px;'> ".$price[$num_prod]."</p>
                                                         </div>
                                                         <div class='actions'>
-                                                            <div class='add'><i data-feather='shopping-cart' class='has-simple-popover' data-content='Add to Cart' data-placement='top'></i></div>
-                                                            <div class='like'><i data-feather='heart' class='has-simple-popover' data-content='Add to Wishlist' data-placement='top'></i></div>
+                                                            <div class='like'><a style='font-size: 10px; margin-bottom: 5px;'>Переглядів: ".$look[$num_prod]."</a></div>
                                                         </div>
                                                     </div>
                                             </div>

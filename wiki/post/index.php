@@ -1,9 +1,34 @@
+<?php
+    //Loader data
+    $cook_id = htmlspecialchars($_COOKIE["id"]);
+    setcookie('site_page', 'wiki', time() + 3600 * 24, "/");
+    include "../../service/config.php";
+
+    $mysql = new mysqli($Host, $User, $Password, $Database);
+    
+    $result = $mysql->query("SELECT * FROM `accounts_users` WHERE `id` = '$cook_id'");
+    $user = $result->fetch_assoc();
+    
+    //Из базы данных: $user['name'];
+    $name = $user['name'];
+    $avatar = $user['avatar'];
+    $premium = $user['premium'];
+
+    if(isset($_GET["id"])){
+      $id = $_GET["id"];
+  }else{
+      header("Location: /shop/");
+  }
+
+    $query_p = $mysql->query("SELECT * FROM `wiki` WHERE `id` = '$id'");
+    $post = $query_p->fetch_assoc();
+?>
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Стаття</title>
+    <title><?php echo($post['header']); ?> - портал пасічника. Найкращі статті.</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="all,follow">
@@ -33,49 +58,40 @@
   </head>
   <body style="padding-top: 72px;">
   <header class="header">
-      <!-- Navbar-->
-      <nav class="navbar navbar-expand-lg fixed-top shadow navbar-light bg-white">
-        <div class="container-fluid">
-          <div class="d-flex align-items-center"><a href="index.html" class="navbar-brand py-1"><img src="../img/logo.png" alt="Directory logo" width="150px"></a>
-            <form action="#" id="search" class="form-inline d-none d-sm-flex">
-              <div class="input-label-absolute input-label-absolute-left input-reset input-expand ml-lg-2 ml-xl-3"> 
-                <label for="search_search" class="label-absolute"><i class="fa fa-search"></i><span class="sr-only">Що ти шукаєш?</span></label>
-                <input id="search_search" placeholder="Пошук" aria-label="Search" class="form-control form-control-sm border-0 shadow-0 bg-gray-200">
-                <button type="reset" class="btn btn-reset btn-sm"><i class="fa-times fas"></i></button>
-              </div>
-            </form>
-          </div>
-          <!-- Navbar Collapse -->
-          <div id="navbarCollapse" class="collapse navbar-collapse">
-            <form action="#" id="searchcollapsed" class="form-inline mt-4 mb-2 d-sm-none">
-              <div class="input-label-absolute input-label-absolute-left input-reset w-100">
-                <label for="searchcollapsed_search" class="label-absolute"><i class="fa fa-search"></i><span class="sr-only">Що ти шукаєш?</span></label>
-                <input id="searchcollapsed_search" placeholder="Пошук" aria-label="Search" class="form-control form-control-sm border-0 shadow-0 bg-gray-200">
-                <button type="reset" class="btn btn-reset btn-sm"><i class="fa-times fas">           </i></button>
-              </div>
-            </form>
-            <ul class="navbar-nav ml-auto">
-              <li class="nav-item"><a href="login.html" class="nav-link">Статті</a></li>
-              <li class="nav-item"><a href="signup.html" class="nav-link">Енциклопедія</a></li>
-              <li class="nav-item mt-3 mt-lg-0 ml-lg-3 d-lg-none d-xl-inline-block"><a href="../new/" class="btn btn-primary">+ Написати статтю</a></li>
-            </ul>
-          </div>
+    <!-- Navbar-->
+    <nav class="navbar navbar-expand-lg fixed-top shadow navbar-light bg-white">
+      <div class="container-fluid">
+        <div class="d-flex align-items-center"><a href="../" class="navbar-brand py-1"><img src="../img/logo.png" alt="Directory logo" width="150px"></a>
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="/">Головна сторінка <span class="sr-only">(current)</span></a>
+            </li>
+          </ul>
         </div>
-      </nav>
-      <!-- /Navbar -->
-    </header>
+        <!-- Navbar Collapse -->
+        <div id="navbarCollapse" class="collapse navbar-collapse">
+          <ul class="navbar-nav ml-auto">
+            <li class="nav-item"><a href="/wiki/catalog/" class="nav-link">Статті</a></li>
+            <li class="nav-item"><a href="/wiki/docs/" class="nav-link">Енциклопедія</a></li>
+            <li class="nav-item mt-3 mt-lg-0 ml-lg-3 d-lg-none d-xl-inline-block"><a href="/wiki/new/" class="btn btn-primary">+ Написати статтю</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!-- /Navbar -->
+  </header>
 
     <!-- Hero Section-->
-    <section style="background-image: url('https://www.shutterstock.com/blog/wp-content/uploads/sites/5/2018/04/Gradient-Featured-Image-03.jpg');" class="pt-7 pb-5 d-flex align-items-end dark-overlay bg-cover">
+    <section style="background-image: url('../catalog/image/<?php echo($post['photo']);?>'); text-shadow: black 0.5px 0.5px 0, black -0.5px -0.5px 0,  black -0.5px 0.5px 0, black 0.5px -0.5px 0;" class="pt-7 pb-5 d-flex align-items-end dark-overlay bg-cover">
       <div class="container overlay-content">
         <div class="d-flex justify-content-between align-items-start flex-column flex-lg-row align-items-lg-end">
           <div class="text-white mb-4 mb-lg-0">
-            <div class="badge badge-pill badge-transparent px-3 py-2 mb-4">КАТЕГОРІЯ</div>
-            <h1 class="text-shadow verified">НАЗВА СТАТТІ АБО КОНТЕНТУ</h1>
-            <p>АВТОР</p>
-            <p>Час читання: 8 мін.</p>
+            <div class="badge badge-pill badge-transparent px-3 py-2 mb-4" style="text-shadow: black 0px 0px 0, black 0px 0px 0,  black 0px 0px 0, black 0px 0px 0;"><?php echo($post['category']); ?></div>
+            <h1 class="text-shadow verified"><?php echo($post['header']); ?></h1>
+            <p><?php echo($user['name']); ?></p>
+            <p>Час читання: <?php echo(round(intval($post['chtenieMIN'])+2)); ?> хвилин(и)</p>
           </div>
-          <div class="calltoactions"><a href="../../forum/" onclick="$('#leaveReview').collapse('show')" data-smooth-scroll class="btn btn-primary">Обговорити на форумі</a></div>
+          <!--div class="calltoactions"><a href="../../forum/" onclick="$('#leaveReview').collapse('show')" data-smooth-scroll class="btn btn-primary">Обговорити на форумі</a></div-->
         </div>
       </div>
     </section>
@@ -86,21 +102,15 @@
           <div class="col-lg-8">
             <!-- About Listing-->
             <div class="text-block">
-              <h3 class="mb-3">Глава</h3>
-              <p class="text-muted"> Текст - текст - текст- текст- текст- текст- текст- текст- текст- текст- текст- текст</p>
-              <p class="text-muted"> Текст - текст - текст- текст- текст- текст- текст- текст- текст- текст- текст- текст</p>
-              <p class="text-muted"> Текст - текст - текст- текст- текст- текст- текст- текст- текст- текст- текст- текст</p>
-              <p class="text-muted"> Текст - текст - текст- текст- текст- текст- текст- текст- текст- текст- текст- текст</p>
-              <p class="text-muted"> Текст - текст - текст- текст- текст- текст- текст- текст- текст- текст- текст- текст</p>
-              <p class="text-muted"> Текст - текст - текст- текст- текст- текст- текст- текст- текст- текст- текст- текст</p>
-              <p class="text-muted"> Текст - текст - текст- текст- текст- текст- текст- текст- текст- текст- текст- текст</p>
-              <p class="text-muted"> Текст - текст - текст- текст- текст- текст- текст- текст- текст- текст- текст- текст</p>
-            </div>
-            <div class="text-block">
-              <h3 class="mb-4">Ще</h3>
-            </div>
+              <!--h3 class="mb-3">Глава</h3-->
+              <p class="text-muted"><?php echo($post['body']);?></p>
 
-            <div class="text-block">
+            </div>
+            <!--div class="text-block">
+              <h3 class="mb-4">Ще</h3>
+            </div-->
+
+            <!--div class="text-block">
               <h3 class="mb-4">Теги статті</h3>
               <ul class="amenities-list list-inline">
 
@@ -116,20 +126,7 @@
                 </li>
 
               </ul>
-            </div>
-            <div class="text-block">
-              <p class="subtitle text-sm text-primary">Коментарі    </p>
-              <h5 class="mb-4">Останні коментарі </h5>
-
-              <div class="media d-block d-sm-flex review">
-                <div class="media-body">
-                  <h6 class="mt-2 mb-1">Анна Яндере</h6>
-                  <div class="mb-2"><i class="fa fa-xs fa-star text-primary"></i><i class="fa fa-xs fa-star text-primary"></i><i class="fa fa-xs fa-star text-primary"></i><i class="fa fa-xs fa-star text-primary"></i><i class="fa fa-xs fa-star text-primary"></i>
-                  </div>
-                  <p class="text-muted text-sm">Мій коментар</p>
-                </div>
-              </div>
-            </div>
+            </div -->
           </div>
 
           <div class="col-lg-4">
@@ -140,7 +137,7 @@
                   <div class="media align-items-center">
                     <div class="media-body">
                       <p class="subtitle text-sm text-primary">Автор</p>
-                      <h4 class="mb-0">Адам Реймс </h4>
+                      <h4 class="mb-0"><?php echo($post['author']); ?></h4>
                     </div>
                     <svg class="svg-icon svg-icon svg-icon-light w-3rem h-3rem ml-3 text-muted">
                       <use xlink:href="../#"> </use>
@@ -150,8 +147,8 @@
                 <div class="card-body">
                   <table class="table text-sm mb-0">
                     <tr>
-                      <th class="pl-0 border-0">Назва статті</th>
-                      <td class="pr-0 text-right border-0">Вчора</td>
+                      <th class="pl-0 border-0"><?php echo($post['header']); ?></th>
+                      <td class="pr-0 text-right border-0"><?php echo($post['Date_Create']); ?></td>
                     </tr>
                   </table>
                 </div>
@@ -161,27 +158,45 @@
     </section>
     
     <footer class="position-relative z-index-10 d-print-none">
-      <div class="py-6 bg-gray-200 text-muted"> 
-        <div class="container">
-          <div class="row">
-            <div class="col-lg-4 mb-5 mb-lg-0">
-              <div class="font-weight-bold text-uppercase text-dark mb-3">Енциклопедія</div>
-              <p>&copy; 2021 Beekeeper portal / Unesell Studio</p>
-            </div>
-            <div class="col-lg-2 col-md-6 mb-5 mb-lg-0">
-              <h6 class="text-uppercase text-dark mb-3">Меню</h6>
-              <ul class="list-unstyled">
-                <li><a href="#" class="text-muted">Категорія     </a></li>
-                <li><a href="#" class="text-muted">Категорія     </a></li>
-                <li><a href="#" class="text-muted">Категорія     </a></li>
-                <li><a href="#" class="text-muted">Категорія     </a></li>
-                <li><a href="#" class="text-muted">Категорія     </a></li>
-              </ul>
-            </div>
+    <div class="py-6 bg-gray-200 text-muted">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-4 mb-5 mb-lg-0">
+            <div class="font-weight-bold text-uppercase text-dark mb-3">Енциклопедія</div>
+            <p>&copy; 2021 Beekeeper portal / Unesell Studio</p>
+            <div class="names_user" style="padding-left: 10px;">
+            <?php
+              if(strlen($cook_id) > 0){ // ПОИСК АВТОРИЗАЦИИ
+                if($premium == "yes"){
+                  echo("<span class='badge bg-warning text-dark'>Premium</span>");
+                }
+                echo("
+                    <a id='user' style='color: black; font-weight: 400; padding-right: 15px; padding-left: 10px;'>".$user['name']."</a>
+                    <img id='user_avatar' src='../../data/users/avatar/".$avatar."' class='round' width='40px' height='40px'>
+                ");
+              }else{
+                echo("
+                    <a id='user' style='color: black; font-weight: 400; padding-right: 15px;'>Вход не выполнен</a>
+                    <img id='user_avatar' src='../../data/users/avatar/default.png' class='round' width='40px' height='40px'>
+                ");
+              }
+            ?>
           </div>
+          </div>
+          <!--div class="col-lg-2 col-md-6 mb-5 mb-lg-0">
+            <h6 class="text-uppercase text-dark mb-3">Меню</h6>
+            <ul class="list-unstyled">
+              <li><a href="#" class="text-muted">Категорія </a></li>
+              <li><a href="#" class="text-muted">Категорія </a></li>
+              <li><a href="#" class="text-muted">Категорія </a></li>
+              <li><a href="#" class="text-muted">Категорія </a></li>
+              <li><a href="#" class="text-muted">Категорія </a></li>
+            </ul>
+          </div-->
         </div>
       </div>
-    </footer>
+    </div>
+  </footer>
 
     <script>
       // ------------------------------------------------------- //

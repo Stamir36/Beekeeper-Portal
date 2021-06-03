@@ -14,7 +14,121 @@
     $name = $user['name'];
     $avatar = $user['avatar'];
     $premium = $user['premium'];
+
+    if(isset($_GET["page"])){
+        $page = $_GET["page"];
+    }
+
+    if(isset($_GET["sett"]) && $_GET["sett"] == 'new'){
+        $settings_search = "`Create_Date` DESC";
+    }else if(isset($_GET["sett"]) && $_GET["sett"] == 'pup'){
+        $settings_search = "`price` ASC";
+    }else if(isset($_GET["sett"]) && $_GET["sett"] == 'pdown'){
+        $settings_search = "`price` DESC";
+    }
+    else{
+        $settings_search = "`Create_Date` DESC";
+    }
     
+    if($_GET["c"] == "all"){
+        $category = "";
+        $result_count = $mysql->query("SELECT COUNT(*) FROM `shop_product` ORDER BY $settings_search");
+        $count_num = $result_count->fetch_assoc();
+        $count = $count_num['COUNT(*)']; // Количество записей
+
+        if($page <= 0 && $_GET["page"] == ""){
+            $page = 1;
+        }
+        
+
+        $OFFSET = $page * 10 - 10; //С какой записи выводить
+        $product = $mysql->query("SELECT * FROM `shop_product` ORDER BY $settings_search limit 10 OFFSET $OFFSET");
+    }
+    if($_GET["c"] == "home"){
+        $category = "Для дому";
+        $result_count = $mysql->query("SELECT COUNT(*) FROM `shop_product` WHERE `category` = '$category' ORDER BY $settings_search");
+        $count_num = $result_count->fetch_assoc();
+        $count = $count_num['COUNT(*)']; // Количество записей
+
+        if($page <= 0 && $_GET["page"] == ""){
+            $page = 1;
+        }
+        
+
+        $OFFSET = $page * 10 - 10; //С какой записи выводить
+        $product = $mysql->query("SELECT * FROM `shop_product` WHERE `category` = '$category' ORDER BY $settings_search limit 10 OFFSET $OFFSET");
+    }
+    if($_GET["c"] == "online"){
+        $category = "Онлайн метаріали";
+        $result_count = $mysql->query("SELECT COUNT(*) FROM `shop_product` WHERE `category` = '$category' ORDER BY $settings_search");
+        $count_num = $result_count->fetch_assoc();
+        $count = $count_num['COUNT(*)']; // Количество записей
+
+        if($page <= 0 && $_GET["page"] == ""){
+            $page = 1;
+        }
+        
+
+        $OFFSET = $page * 10 - 10; //С какой записи выводить
+        $product = $mysql->query("SELECT * FROM `shop_product` WHERE `category` = '$category' ORDER BY $settings_search limit 10 OFFSET $OFFSET");
+    }
+    if($_GET["c"] == "pasick"){
+        $category = "Пасіка";
+        $result_count = $mysql->query("SELECT COUNT(*) FROM `shop_product` WHERE `category` = '$category' ORDER BY $settings_search");
+        $count_num = $result_count->fetch_assoc();
+        $count = $count_num['COUNT(*)']; // Количество записей
+
+        if($page <= 0 && $_GET["page"] == ""){
+            $page = 1;
+        }
+        
+
+        $OFFSET = $page * 10 - 10; //С какой записи выводить
+        $product = $mysql->query("SELECT * FROM `shop_product` WHERE `category` = '$category' ORDER BY $settings_search limit 10 OFFSET $OFFSET");
+    }
+    if($_GET["c"] == "work"){
+        $category = "Работа";
+        $result_count = $mysql->query("SELECT COUNT(*) FROM `shop_product` WHERE `category` = '$category' ORDER BY $settings_search");
+        $count_num = $result_count->fetch_assoc();
+        $count = $count_num['COUNT(*)']; // Количество записей
+
+        if($page <= 0 && $_GET["page"] == ""){
+            $page = 1;
+        }
+        
+
+        $OFFSET = $page * 10 - 10; //С какой записи выводить
+        $product = $mysql->query("SELECT * FROM `shop_product` WHERE `category` = '$category' ORDER BY $settings_search limit 10 OFFSET $OFFSET");
+    }
+    if($_GET["c"] == "ect"){
+        $category = "Інше";
+        $result_count = $mysql->query("SELECT COUNT(*) FROM `shop_product` WHERE `category` = '$category' ORDER BY $settings_search");
+        $count_num = $result_count->fetch_assoc();
+        $count = $count_num['COUNT(*)']; // Количество записей
+
+        if($page <= 0 && $_GET["page"] == ""){
+            $page = 1;
+        }
+        
+
+        $OFFSET = $page * 10 - 10; //С какой записи выводить
+        $product = $mysql->query("SELECT * FROM `shop_product` WHERE `category` = '$category' ORDER BY $settings_search limit 10 OFFSET $OFFSET");
+    }if($_GET["c"] == ""){
+        $category = "";
+        $result_count = $mysql->query("SELECT COUNT(*) FROM `shop_product` ORDER BY $settings_search");
+        $count_num = $result_count->fetch_assoc();
+        $count = $count_num['COUNT(*)']; // Количество записей
+
+        if($page <= 0 && $_GET["page"] == ""){
+            $page = 1;
+        }
+        
+
+        $OFFSET = $page * 10 - 10; //С какой записи выводить
+        $product = $mysql->query("SELECT * FROM `shop_product` ORDER BY $settings_search limit 10 OFFSET $OFFSET");
+    }
+
+    $num_page = ceil($count / 10); //Количество страниц
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -82,11 +196,33 @@
                                 <!-- Sort -->
                                 <div class="sort-box">
                                     <div class="sort-box-select">
-                                        <select data-placeholder="Default order" class="chosen-select-no-single">
+                                        <select data-placeholder="Default order" id="sett" class="chosen-select-no-single" onchange="sett();">
                                             <option>Самі нові</option>	
                                             <option>Найшижча ціна</option>
                                             <option>Найвища ціна</option>
                                         </select>
+                                        <script>
+                                            if("<?php echo($_GET['sett']);?>" == "new"){
+                                                document.getElementById('sett').value = "Самі нові";
+                                            }
+                                            if("<?php echo($_GET['sett']);?>" == "pup"){
+                                                document.getElementById('sett').value = "Найшижча ціна";
+                                            }
+                                            if("<?php echo($_GET['sett']);?>" == "pdown"){
+                                                document.getElementById('sett').value = "Найвища ціна";
+                                            }
+                                            function sett(){
+                                                if(document.getElementById('sett').value == "Самі нові"){
+                                                    document.location.href = '?c=<?php echo($_GET['c']);?>&sett=new';
+                                                }
+                                                if(document.getElementById('sett').value == "Найшижча ціна"){
+                                                    document.location.href = '?c=<?php echo($_GET['c']);?>&sett=pup';
+                                                }
+                                                if(document.getElementById('sett').value == "Найвища ціна"){
+                                                    document.location.href = '?c=<?php echo($_GET['c']);?>&sett=pdown';
+                                                }
+                                            }
+                                        </script>
                                     </div>
                                 </div>
                             </div>
@@ -96,41 +232,70 @@
                             <div class="columns is-product-list is-multiline">
                                 <div class="column is-12">
                                     <ul>
-                                        <!-- Product -->
-                                        <li class="flat-card is-auto is-list-item">
-                                            <!-- Product image -->
-                                            <span class="image">
-                                                <img src="../assets/images/products/red-seat.png" alt="">
-                                            </span>
-                                            <!-- Product meta -->
-                                            <span class="product-info">
-                                                <!-- Rating -->
-                                                <span class="rating">
-                                                    <a>Дата створення</a>
-                                                </span>
-                                                <!-- Meta -->
-                                                <a href="#"><span class="product-name">Назва</span></a>
-                                                <span class="product-description">Місто</span>
-                                                <span class="product-price">
-                                                    ЦІНА
-                                                </span>
-                                            </span>
-        
-                                            <!-- Abstract -->
-                                            <span class="product-abstract is-hidden-mobile">
-                                                ОПИС ПРОДУКТУ
-                                                <span class="view-more">
-                                                    <a href="product.html">Детальніше <i data-feather="chevron-right"></i></a>
-                                                </span>
-                                            </span>
-        
-                                            <!-- Actions -->
-                                            <span class="actions">
-                                                <span class="add"><i data-feather="shopping-cart" class="has-simple-popover" data-content="Add to Cart" data-placement="top"></i></span>
-                                                <span class="like"><i data-feather="heart" class="has-simple-popover" data-content="Add to Wishlist" data-placement="top"></i></span>
-                                            </span>
 
-                                        </li>
+                                    <?php
+                                        $id_product = Array();
+                                        $photo = Array();
+                                        $name = Array();
+                                        $city = Array();
+                                        $price = Array();
+                                        $Create_Date = Array();
+                                        $autor_name = Array();
+                                        while($result = $product->fetch_assoc()){
+                                            $id_product[] = $result['id'];
+                                            $photo[] = $result['photo'];
+                                            $name[] = $result['name'];
+                                            $city[] = $result['city'];
+                                            $price[] = $result['price'];
+                                            $Create_Date[] = $result['Create_Date'];
+                                            $autor_name[] = $result['autor_name'];
+                                        }
+        
+                                        $num_prod = 0;
+        
+                                        if(count($photo) == count($name) && count($city) != 0 && count($name) != 0 ){
+                                            while($num_prod <= (count($name) - 1)){
+                                                echo("
+                                                <li class='flat-card is-auto is-list-item'>
+                                                    <!-- Product image -->
+                                                    <span class='image'>
+                                                        <img src='/shop/catalog/image/".$photo[$num_prod]."' alt=''>
+                                                    </span>
+                                                    <!-- Product meta -->
+                                                    <span class='product-info'>
+                                                        <!-- Rating -->
+                                                        <span class='rating'>
+                                                            <a href='/shop/product/?id=".$id_product[$num_prod]."'>".$name[$num_prod]."</a>
+                                                        </span>
+                                                        <!-- Meta -->
+                                                        <a href='/shop/product/?id=".$id_product[$num_prod]."'><span class='product-name'>".$city[$num_prod]."</span></a>
+                                                        <span class='product-description'>".date("F j, Y", strtotime($Create_Date[$num_prod]))."</span>
+                                                        <span class='product-price'>
+                                                            ".$price[$num_prod]."
+                                                        </span>
+                                                    </span>
+                                                    <!-- Abstract -->
+                                                    <span class='product-abstract is-hidden-mobile'>
+                                                        Продавець:<br/>
+                                                        <a style='justify-content: left;'>".$autor_name[$num_prod]."</a>
+                                                        <span class='view-more'>
+                                                            <a class='button upper-button rounded is-bold raised' href='/shop/product/?id=".$id_product[$num_prod]."' style='padding: 15px; border-radius: 2px;'>Детальніше <i data-feather='chevron-right'></i></a>
+                                                        </span>
+                                                    </span>
+                                                </li>
+                                                ");
+                                                $num_prod = $num_prod + 1;
+                                            }
+                                        }else{
+                                            echo("
+                                                <div style='padding: 20px; width: 100%; background-color: #fff; border-radius: 10px;'>
+                                                    <a style='color:red;'>Нічого не знайдено 😥 <br/>
+                                                    Схоже, каталог зараз пустий...</a>
+                                                </div>
+                                            ");
+                                        }
+                                        ?>
+
 
                                     </ul>
         
@@ -139,7 +304,79 @@
                             </div>
                             <!-- /Product list -->
         
-                            <div class="show-more"><a href="#">Показати більше</a></div>
+                            <nav class="wishlist-pagination" style="padding-top: 15px; z-index: -10; justify-content:left;">
+                                <ul class="pagination" style="text-align: left;">
+                                    
+                                    <?php
+                                    
+                                    if($num_page == 1){
+                                    echo("
+                                        <li class='page-item active'>
+                                            <a class='page-link'>1</a>
+                                        </li>
+                                        <li class='page-item disabled'>
+                                            <a class='page-link'>Наступна</a>
+                                        </li>
+                                    ");
+                                    }else{
+                                    if($page == 1){
+                                        $back = "../my/";
+                                        echo("
+                                        <li class='page-item disabled' style='pointer-events: none;'>
+                                        <a class='page-link' onclick='document.location.href = `../my/?page=".($page - 1)."&c=".$_GET['c']."&sett=".$_GET['sett']."`;' tabindex='-1'>Попередня</a>
+                                        </li>
+                                    ");
+                                    }else{
+                                        echo("
+                                        <li class='page-item' style='cursor: pointer;'>
+                                        <a class='page-link' onclick='document.location.href = `../my/?page=".($page - 1)."&c=".$_GET['c']."&sett=".$_GET['sett']."`;' tabindex='-1'>Попередня</a>
+                                        </li>
+                                    ");
+                                    }
+
+                                    $start_page = $page;
+                                    $end_page = $start_page + 3;
+                                    $progress = true;
+
+                                    if($page != 1){
+                                        echo("
+                                        <li class='page-item' style='cursor: pointer; z-index: 0;'><a class='page-link' onclick='document.location.href = `../my/?page=".($start_page - 1)."&c=".$_GET['c']."&sett=".$_GET['sett']."`;'>".($start_page - 1)."</a></li>
+                                        ");
+                                    }
+
+                                    while ($start_page < $end_page && $start_page <= $num_page) {
+                                        if($start_page == $page){
+                                        echo("
+                                            <li class='page-item active' style='z-index: 0;'><a class='page-link'>".$start_page."</a></li>
+                                        ");
+                                        }else{
+                                        echo("
+                                            <li class='page-item' style='cursor: pointer; z-index: 0;'><a class='page-link' onclick='document.location.href = `../my/?page=".$start_page."&c=".$_GET['c']."&sett=".$_GET['sett']."`;'>".$start_page."</a></li>
+                                        ");
+                                        }
+                                        $start_page = $start_page + 1;
+                                    }
+
+                                    if ($num_page > 1 && $page > 0 && $num_page != $page) {
+                                        $back = "../my/";
+                                    echo("
+                                        <li class='page-item' style='cursor: pointer;'>
+                                            <a class='page-link' onclick='document.location.href = `../my/?page=".($page + 1)."&c=".$_GET['c']."&sett=".$_GET['sett']."`;' tabindex='-1'>Наступна</a>
+                                        </li>
+                                    ");
+                                    }else{
+                                        $back = "../my/";
+                                        echo("
+                                        <li class='page-item disabled'>
+                                            <a class='page-link' onclick='document.location.href = `../my/?page=".($page + 1)."&c=".$_GET['c']."&sett=".$_GET['sett']."`;' tabindex='-1'>Наступна</a>
+                                        </li>
+                                        ");
+                                    }                     
+                                    }
+
+                                    ?>
+                                </ul>
+                            </nav>
         
                         </div>
                     </div> 

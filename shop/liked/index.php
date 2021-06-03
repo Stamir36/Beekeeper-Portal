@@ -21,6 +21,28 @@
     }else{
         header('Location: /login/');
     }
+    
+    if(isset($_GET["page"])){
+        $page = $_GET["page"];
+      }
+
+      $price_count = $mysql->query("SELECT SUM(product_price) FROM `liked_shop` WHERE `user_liked` = '$cook_id' ");
+      $arrl_price = $price_count->fetch_assoc();
+      $all_price = $arrl_price['SUM(product_price)'];
+      if($all_price == ""){ $all_price = 0; }
+
+      $result_count = $mysql->query("SELECT COUNT(*) FROM `liked_shop` WHERE `user_liked` = '$cook_id' ");
+      $count_num = $result_count->fetch_assoc();
+      $count = $count_num['COUNT(*)']; $all_liked = $count_num['COUNT(*)'];// Количество записей.
+  
+      if($page <= 0){
+        header('Location: ?page=1');
+      }
+  
+      $OFFSET = $page * 5 - 5; //С какой записи выводить
+      $liked = $mysql->query("SELECT * FROM `liked_shop` WHERE `user_liked` = '$cook_id' limit 5 OFFSET $OFFSET");
+  
+      $num_page = ceil($count / 5); //Количество страниц.
     /*      <?php echo();?>      */
 ?>
 <!DOCTYPE html>
@@ -92,6 +114,196 @@
                                     <li><a href="../orders/">Замовлення</a></li>
                                 </ul>
                             </div>
+
+
+                            <!-- Row -->
+                            <div class="columns is-account-grid is-multiline">
+                                
+        
+                                <div class="column is-8">
+                                    <div class="wishlist-card is-auto">
+                                        <!-- List of Wishlist Items -->
+                                        <ul class="wishlist">
+
+                                            <?php
+                                                $product_id = Array();
+                                                $name_product = Array();
+                                                $product_image = Array();
+                                                $product_price = Array();
+
+                                                while($result = $liked->fetch_assoc()){
+                                                    $product_id[] = $result['product_id'];
+                                                    $name_product[] = $result['name_product'];
+                                                    $product_image[] = $result['product_image'];
+                                                    $product_price[] = $result['product_price'];
+                                                }
+                    
+                                                    $num_prod = 0; 
+                    
+                                                    if(count($product_id) == count($name_product) && count($product_image) != 0 && count($product_price) != 0 ){
+                                                        while($num_prod <= (count($product_id) - 1)){
+                                                            echo("
+                                                            <li id='block_".$product_id[$num_prod]."' class='wishlist-item flat-card' onclick='return true' style='min-height: 0;'>
+                                                                <div class='item-wrapper'>
+                                                                    <span class='item-wrapper is-account-grid is-multiline' style='cursor: pointer; padding: 0px 0px; width: 80%;' onclick='document.location.href = `/shop/product/?id=".$product_id[$num_prod]."`;'>
+                                                                        <!-- Product Image -->
+                                                                        <div style='width: 120px; justify-content: center; display: inline block; text-align: center;'>
+                                                                            <img src='/shop/catalog/image/".$product_image[$num_prod]."' alt=''>
+                                                                        </div>
+                                                                        <!-- Product meta -->
+                                                                        <span class='product-info'>
+                                                                            <span>".$name_product[$num_prod]."</span>
+                                                                            <span class='product-price' style='color:orange; font-size: 18px;'>".$product_price[$num_prod]."</span>
+                                                                        </span>
+                                                                    </span>
+                                                                    <div class='action no-mobile' style='z-index: 10000;'>
+                                                                        <!-- Dropdown button -->
+                                                                        <div class='dropdown is-right'>
+                                                                            <span class='dropdown-trigger'>
+                                                                                <span class='dropdown-button' >
+                                                                                    <a onclick='document.location.href = `del_like.php/?id=".$product_id[$num_prod]."`' ><i data-feather='x'></i></a>
+                                                                                </span>
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                            ");
+                                                            $num_prod = $num_prod + 1;
+                                                        }
+                                                    }else{
+                                                        echo("
+                                                        <!-- Empty Cart card -->
+                                                        <div class='columns is-account-grid is-multiline'>
+                                                            <div class='column is-12'>
+                                                                <div class='flat-card is-auto empty-cart-card'>
+                                                                    <div class='empty-cart has-text-centered'>
+                                                                        <h3>Наразі ваш кошик порожній</h3>
+                                                                        <img src='../assets/images/icons/shop.svg' alt='' style='max-height: 250px; max-width: 250px;'>
+                                                                        <a href='../catalog/' class='button big-button rounded'>Продовжити покупки</a>
+                                                                        <small>Відкрийте наші найпопулярніші предмети</small>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        ");
+                                                }
+                                                ?>
+
+                                        </ul>
+                                    </div>
+        
+                                    <!-- List Pagination -->
+                                    <nav class="wishlist-pagination" style="padding-top: 20px; z-index: -10; justify-content:left;">
+                                        <ul class="pagination" style="text-align: left;">
+                                            
+                                            <?php
+                                            
+                                            if($num_page == 1){
+                                            echo("
+                                                <li class='page-item active'>
+                                                    <a class='page-link'>1</a>
+                                                </li>
+                                                <li class='page-item disabled'>
+                                                    <a class='page-link'>Наступна</a>
+                                                </li>
+                                            ");
+                                            }else{
+                                            if($page == 1){
+                                                $back = "../liked/";
+                                                echo("
+                                                <li class='page-item disabled' style='pointer-events: none;'>
+                                                <a class='page-link' onclick='document.location.href = `../liked/?page=".($page - 1)."`;' tabindex='-1'>Попередня</a>
+                                                </li>
+                                            ");
+                                            }else{
+                                                echo("
+                                                <li class='page-item' style='cursor: pointer;'>
+                                                <a class='page-link' onclick='document.location.href = `../liked/?page=".($page - 1)."`;' tabindex='-1'>Попередня</a>
+                                                </li>
+                                            ");
+                                            }
+
+                                            $start_page = $page;
+                                            $end_page = $start_page + 3;
+                                            $progress = true;
+
+                                            if($page != 1){
+                                                echo("
+                                                <li class='page-item' style='cursor: pointer; z-index: 0;'><a class='page-link' onclick='document.location.href = `../liked/?page=".($start_page - 1)."`;'>".($start_page - 1)."</a></li>
+                                                ");
+                                            }
+
+                                            while ($start_page < $end_page && $start_page <= $num_page) {
+                                                if($start_page == $page){
+                                                echo("
+                                                    <li class='page-item active' style='z-index: 0;'><a class='page-link'>".$start_page."</a></li>
+                                                ");
+                                                }else{
+                                                echo("
+                                                    <li class='page-item' style='cursor: pointer; z-index: 0;'><a class='page-link' onclick='document.location.href = `../liked/?page=".$start_page."`;'>".$start_page."</a></li>
+                                                ");
+                                                }
+                                                $start_page = $start_page + 1;
+                                            }
+
+                                            if ($num_page > 1 && $page > 0 && $num_page != $page) {
+                                                $back = "../liked/";
+                                            echo("
+                                                <li class='page-item' style='cursor: pointer;'>
+                                                    <a class='page-link' onclick='document.location.href = `../liked/?page=".($page + 1)."`;' tabindex='-1'>Наступна</a>
+                                                </li>
+                                            ");
+                                            }else{
+                                                $back = "../liked/";
+                                                echo("
+                                                <li class='page-item disabled'>
+                                                    <a class='page-link' onclick='document.location.href = `../liked/?page=".($page + 1)."`;' tabindex='-1'>Наступна</a>
+                                                </li>
+                                                ");
+                                            }                     
+                                            }
+
+                                            ?>
+                                        </ul>
+                                    </nav>
+                                    <!-- /List Pagination -->
+                                </div>
+                                <!-- Wishlists -->
+                                <div class="column is-4">
+                                    <!-- List of Wishlists -->
+                                    <div class="flat-card is-auto menu-card">
+                                        <div class="card-title">
+                                            <h3>Інформація 📝</h3>
+        
+                                            <div class="edit-account">
+                                            </div>
+                                        </div>
+                                        <div class='cart-action' id='total_sum_block' style="margin: 20px;">
+                                            <span class='cart-total' style='cursor: default;'>
+                                                <p>Ціна за все:</p>
+                                                <small style="font-size: 18px; color: #0023ff;">₴</small><span id='all_price' style="font-size: 24px; color: #0023ff;"><?php echo($all_price); ?></span>
+                                                <p style="margin-top: 10px;">Кількість:</p>
+                                                <span id='all_price' style="font-size: 21px; color: orange;"><?php echo($all_liked); ?></span>
+                                                <br>
+                                                <?php
+                                                    if($all_liked > 0){
+                                                        echo("
+                                                        <a class='button feather-button primary-button btn-outlined' style='margin-top: 10px; width: 100%;' onclick='document.location.href = `../checkout/?prod=all`;'>Оформити замовлення</a>
+                                                        ");
+                                                    }
+                                                ?>
+                                            </span>
+                                        </div>
+                                        <!--
+                                        <a href='/shop/liked/' class='button primary-button upper-button raised is-bold'>
+                                            <span>Детальніше</span>
+                                        </a>
+                                        -->
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /Row -->
 
                         </div>
                     </div>

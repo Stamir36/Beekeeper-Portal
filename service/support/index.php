@@ -61,7 +61,7 @@
           <nav class="navbar navbar-expand-lg navbar-light px-sm-0">
             <a class="navbar-brand" href="../../">
               <img class="logo" src="../../assets/img/logo.svg" alt="logo" />
-              <span>Beekeeper portal</span>  
+              <span style="color:rgb(233, 233, 233);">Beekeeper portal</span>  
             </a>
 
             <button class="navbar-toggler menu ripplemenu" type="button" data-toggle="collapse"
@@ -149,9 +149,9 @@
                       </div>
 
                       <div class="link_item selecr_mark" data-aos="fade-up" data-aos-delay="300">
-                        <a href="mailto:unesell@outlook.co">
+                        <a href="mailto:support@beesportal.online">
                           <i class="tio email"></i>
-                          unesell@outlook.com
+                          support@beesportal.online
                         </a>
                       </div>
 

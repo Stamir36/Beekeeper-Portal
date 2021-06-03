@@ -207,7 +207,7 @@
                   <p class="text_pc_mobile" style="color: #FFBF08;">Пошук по темам</p>
 
                   <input type="text" id="search_box" class="search_box"> <br class="yes_mobile"/><br class="yes_mobile" />
-                  <a class="buttom_go" role="button" onclick="document.location.href = '../search/?s=s=' + document.getElementById('search_box').value + '&page=1';">Пошук</a>
+                  <a class="buttom_go" role="button" onclick="document.location.href = '../search/?s=' + document.getElementById('search_box').value + '&page=1';">Пошук</a>
                 </div>
             </div>
             </article>

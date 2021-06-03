@@ -153,6 +153,12 @@
                             <img src="https://img.icons8.com/fluent/48/000000/find-matching-job.png"/>
                         </a>
                     </li>
+                    <li>
+                        <a href="/../../../../shop/catalog/?c=ect">
+                            <span>Інше</span>
+                            <img src="https://img.icons8.com/fluent/48/000000/window-other.png"/>
+                        </a>
+                    </li>
                 </ul>
         
                 
@@ -164,7 +170,7 @@
             </div>
         </div>
         <!-- Shop quickview -->
-        <div class="shop-quickview has-background-image" data-background="/../../../../shop/assets/images/bg/sidebar.jpeg">
+        <div class="shop-quickview has-background-image" data-background="/assets/img/polyans/abstract-lines.svg">
             <div class="inner">
                 <!-- Header -->
                 <div class="quickview-header">
@@ -309,7 +315,7 @@
                         <div class='cart-body' id='none_card'>
                             <div class='empty-cart has-text-centered'>
                                 <h3>Тут пусто...</h3>
-                                <img src='/../../../../shop/assets/images/icons/new-cart.svg' alt=''>
+                                <img src='/../../../../shop/assets/images/icons/packpage.svg' alt=''>
                                 <a href='/../../../../shop/' class='button big-button rounded'>Почніть купувати</a>
                                 <small></small>
                             </div>
@@ -334,7 +340,7 @@
                         <div class='cart-body' id='none_card'>
                             <div class='empty-cart has-text-centered'>
                                 <h3>Зареєструйтеся та почніть купувати!</h3>
-                                <img src='/../../../../shop/assets/images/icons/new-cart.svg' alt=''>
+                                <img src='/../../../../shop/assets/images/icons/packpage.svg' alt=''>
                                 <a href='/../../../../login/' class='button big-button rounded'>Реєстрація / Вхід</a>
                                 <small></small>
                             </div>

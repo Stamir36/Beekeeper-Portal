@@ -104,7 +104,7 @@
                                                 <img src="/data/users/avatar/<?php echo($avatar);?>" class='round' alt="">
                                             </div>
                                             <div class="username has-text-centered">
-                                                <span><?php echo($name);?></span>
+                                                <span><?php $idname = $user['name']; echo($idname);?></span>
                                                 <small>Дата реєстрації: <?php echo(date("F j, Y", strtotime($Reg_Date)));?></small>
                                             </div>
                                         </div>
@@ -210,48 +210,52 @@
                                         <div class="card-title">
                                             <h3>Повідомлення</h3>
                                             <!-- Cog Button -->
-                                            <div class="edit-account is-vhidden">
-                                                <a href="account-edit.html"><i class="feather-icons" data-feather="settings"></i></a>
-                                            </div>
         
                                         </div>
+                                        <style>
+                                            .box-block{
+                                                background-color: rgb(240, 240, 240); width: 98%; padding: 15px; padding-left: 20px; border-radius: 10px; border: 1px solid rgb(240, 240, 240);
+                                                cursor: pointer;
+                                            }
+                                            .box-block:hover{
+                                                background-color: rgb(250, 250, 250); border: 1px solid wheat;
+                                            }
+                                        </style>
                                         <!-- Billing Address -->
-                                        <div class="card-body">
-                                            <div class="columns">
-                                                <div class="column is-6">
-                                                    <div class="info-block">
-                                                        <span class="label-text">НАЗВАНИЕ</span>
-                                                        <span class="label-value">ЗНАЧЕНИЕ</span>
-                                                    </div>
-        
-                                                    <div class="info-block">
-                                                        <span class="label-text">НАЗВАНИЕ</span>
-                                                        <span class="label-value">ЗНАЧЕНИЕ</span>
-                                                    </div>
-                                                    
-                                                    <div class="info-block">
-                                                        <span class="label-text">НАЗВАНИЕ</span>
-                                                        <span class="label-value">ЗНАЧЕНИЕ</span>
-                                                    </div>
-                                                </div>
-        
-                                                <div class="column is-6">
-                                                    <div class="info-block">
-                                                        <span class="label-text">НАЗВАНИЕ</span>
-                                                        <span class="label-value">ЗНАЧЕНИЕ</span>
-                                                    </div>
+                                        <div class="card-body" style="padding: 10px;">
+                                                <div class="column is-6" style="width: 100%; margin:0px; padding: 0px; overflow: auto; max-height: 250px;">
+                                                    <?php
+                                                        $product = $mysql->query("SELECT * FROM `shop_mess` WHERE `p_autor` = '$idname';");
+                                                        $id_block = Array();
+                                                        $text = Array();
+                                                        $autor = Array();
+                                                        $products = Array();
+                        
+                                                        while($result = $product->fetch_assoc()){
+                                                            $text[] = $result['text'];
+                                                            $autor[] = $result['autor'];
+                                                            $id_block[] = $result['id'];
+                                                            $products[] = $result['product'];
+                                                        }
+                        
+                                                        $num_prod = 0;
+                        
+                                                        if(count($text) == count($autor) && count($text) != 0 && count($autor) != 0 ){
+                                                            while($num_prod <= (count($text) - 1)){
+                                                                echo("
+                                                                <div class='info-block box-block flat-card profile-info-card is-auto modal-trigger' data-modal='review-modal' id='block_".$id_block[$num_prod]."' onclick='mess_ref(`".$autor[$num_prod]."`,`".$text[$num_prod]."`, `".$id_block[$num_prod]."`, `".$products[$num_prod]."`)'>
+                                                                    <span class='label-text'>Від: ".$autor[$num_prod]."</span>
+                                                                    <span class='label-value'>".mb_strimwidth($text[$num_prod], 0, 50, '...')."</span>
+                                                                </div>
+                                                                ");
+                                                                $num_prod = $num_prod + 1;
+                                                            }
+                                                        }else{
+                                                            echo("<a class='t_mobile' style='color: #322EFF; text-align: center; background-color: #fff; margin: 10px; border-radius: 4px;'>Немає повідомлень</a>");
+                                                        }
+                                                    ?>
 
-                                                    <div class="info-block">
-                                                        <span class="label-text">НАЗВАНИЕ</span>
-                                                        <span class="label-value">ЗНАЧЕНИЕ</span>
-                                                    </div>
-
-                                                    <div class="info-block">
-                                                        <span class="label-text">НАЗВАНИЕ</span>
-                                                        <span class="label-value">ЗНАЧЕНИЕ</span>
-                                                    </div>
                                                 </div>
-                                            </div>
                                         </div>
                                         <!-- /Address Form -->
                                     </div>
@@ -269,11 +273,52 @@
                         <h5>Сервіс оголошень - Beekeeper portal</h5>
                         <p>Unesell Studio @2021</p>
                     </div>
-                    
-                </footer>
+            </footer>
 
         </div>
         <!-- /Main wrapper -->
+        <div id="review-modal" class="modal review-modal">
+            <div class="modal-background"></div>
+            <div class="modal-content">
+                <div class="box">
+                    <div class="box-header">
+                        <i data-feather='info'></i>
+                        <span>Повідомлення.</span>
+                        <div class="modal-delete"><i data-feather="x"></i></div>
+                    </div>
+                    <div class="box-body">   
+                        <div class="control">
+                            <span id="text_mess_autor" style="color: #00497a;"></span><br>
+                            <span id="text_mess_info"></span>
+                            <div class="textarea-button" style="margin-top: 15px; float: right; margin-bottom: 20px;">
+                                <button class="button button raised" style="font-family: Unecoin;"><div class="modal-delete" id="modal-delete">Закрити</div></button>
+                                <button id="del_buttom" class="button danger-button raised" onclick="DELETE(id);" style="font-family: Unecoin; background-color: #00497a; color: #fff;">Видалити</button>
+                                <button id="go_buttom" class="button danger-button raised" onclick="" style="font-family: Unecoin; background-color: #c97200; color: #fff;">Сторінка оголошення</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>
+            function mess_ref(autor, text, id, id_p){
+                document.getElementById("text_mess_autor").textContent = "Автор: " + autor;
+                document.getElementById("text_mess_info").textContent = text;
+                document.getElementById("del_buttom").setAttribute('onclick','DELETE(' + id + ');');
+                document.getElementById("go_buttom").setAttribute('onclick','document.location.href = `/shop/product/?id=' + id_p + '`');
+            }
+            function DELETE(id){
+                $.ajax({
+                    url: 'del.php',
+                    type: 'POST',
+                    data:{id: id},
+                    success: function(data) {
+                        document.getElementById("block_" + id).remove();
+                        document.getElementById("modal-delete").click();
+                    }
+                });
+            }
+        </script>
         <!-- Concatenated plugins -->
         <script src="../assets/js/app.js"></script>
         <!-- Helios js -->
